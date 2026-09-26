@@ -93,23 +93,6 @@ Column {
             onClicked: { if (box.shell.createProfile(nameInput.text.trim())) nameInput.text = ""; }
         }
     }
-    MenuToggle { // the profiles as buttons in the launcher's strip
-        shell: box.shell
-        fullWidth: box.width
-        label: "Profile buttons in the launcher"
-        tip: "Shows the profiles (up to 5, the default first) next to the power buttons, to switch with a click. Needs one saved profile. Hover a button for its name."
-        checked: box.shell.showProfileButtons
-        onToggled: box.shell.showProfileButtons = !box.shell.showProfileButtons
-    }
-    MenuChoice {
-        shell: box.shell
-        fullWidth: box.width
-        enabled: box.shell.showProfileButtons // dimmed, not hidden, while they are off
-        label: "Label them with"
-        options: [{ text: "1  2  3", value: "numbers" }, { text: "A  B  C", value: "letters" }, { text: "I  II  III", value: "roman" }]
-        current: box.shell.profileLabels
-        onChosen: value => box.shell.profileLabels = value
-    }
     MenuButton { // the profile in use gets the name typed above
         shell: box.shell
         width: box.width

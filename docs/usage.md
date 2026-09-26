@@ -108,7 +108,7 @@ seconds, so they do not cover the icons while you aim at one (in ⚙ > Tiles, *T
 
 An optional strip of buttons: **All apps**, **Shut down**, **Restart**, **Log out** (Omarchy's own
 `omarchy-system-shutdown` / `-reboot` / `-logout`), and, if you turn them on, your saved **profiles**. Each button is
-switched on in ⚙ > Buttons (profiles in ⚙ > Profiles). It sits below the tiles in a centered or full-screen
+switched on in ⚙ > Buttons (the profile buttons too, once you have saved a profile in ⚙ > Profiles). It sits below the tiles in a centered or full-screen
 launcher, and on the side opposite the edge of a panel. Seven styles (Square line, thin square outlines, is the default), sized in ⚙ > Buttons.
 
 ## Keyboard shortcuts

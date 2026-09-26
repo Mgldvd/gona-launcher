@@ -10,6 +10,11 @@ ok(shown("Menu background") && shown("Menu size"), "Menu: its background and siz
 ok(!shown("Browse ready-made profiles…") && !shown("Follow the Omarchy theme"), "and nothing else");
 menu.tab = keys.indexOf("profiles"); wait(300);
 ok(shown("Browse ready-made profiles…"), "Profiles: the ready-made profiles button");
+ok(!shown("Profile buttons") && !shown("Label profile buttons with"), "Profiles: the profile buttons switch is not here");
+menu.tab = keys.indexOf("buttons"); wait(300);
+ok(shown("Profile buttons") && shown("Label profile buttons with"), "Buttons: the profile buttons and their labels are here");
+sh.showProfileButtons = true; sh.profileLabels = "roman"; sh.resetTab("buttons"); wait(100);
+eq([sh.showProfileButtons, sh.profileLabels], [false, "numbers"], "and Reset this tab on Buttons puts them back");
 menu.tab = keys.indexOf("colors"); wait(300);
 ok(shown("Follow the Omarchy theme"), "Colors: Follow the Omarchy theme");
 sh.followTheme = false; sh.resetTab("colors"); wait(100);
