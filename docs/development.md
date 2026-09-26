@@ -98,6 +98,15 @@ were mapped, so the director re-maps the words above the launcher each time it o
 1366x768 screen; the app icons are those of the machine it runs on, so the video shows that machine's apps. Needs
 `gpu-screen-recorder`, `ffmpeg` (with libwebp) and `node`; the WebP takes a few minutes to encode.
 
+## The Omarchy marketplace
+
+Listed through [omacom/omarchy-plugin-marketplace](https://github.com/omacom/omarchy-plugin-marketplace) (submitted as issue #8851). A
+new version is published with its **Plugin verification** issue form ("Verify and publish a newer upstream commit", with the
+plugin id `gona.launcher`, the repository URL and the commit). The bot validates the exact commit and runs a static security
+baseline on it, so keep the root README free of the words the scanner flags (the names of the privilege tools) and keep the
+checklist true: **the plugin must not change user configuration without explicit consent** (the Super shortcut is asked for
+on the first start, see `.memory/decisions/0003-super-key-in-bindings.md`). The plugin id is permanent there.
+
 ## Media: videos and large images
 
 Git keeps every version of every file forever, so a video committed once, even if deleted later, stays in `.git` and

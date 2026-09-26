@@ -14,8 +14,10 @@ below as not going to be done, so it does not come back as a pending item.
 
 - A fresh clone of `master` (over SSH) passes `omarchy plugin validate` and its `app/` is identical to `dev`'s; the CI workflow
   (`verify`) passes on GitHub; `v1.0.0` is tagged on `master` with a GitHub release.
-- **Not done: an install from a stranger's point of view** (`omarchy plugin add` of the HTTPS URL on another account or a
-  VM), because the repository is still private, so that URL asks for a login. Do it once it is public.
+- The repository is public; an unauthenticated clone of `master` validates, and `omarchy plugin add` of the HTTPS URL into an
+  empty `HOME` installs it (the first start in a throw-away instance is `tests/ui/welcome*.body`).
+- Submitted to the Omarchy marketplace: [omacom/omarchy-plugin-marketplace#8851](https://github.com/omacom/omarchy-plugin-marketplace/issues/8851)
+  (Desktop; tags launcher and bar). Validation and the automated security baseline pass; a maintainer decides the listing.
 
 ## Checked by hand by the owner
 
