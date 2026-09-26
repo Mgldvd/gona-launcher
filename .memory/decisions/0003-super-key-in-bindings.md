@@ -12,3 +12,7 @@ between Off, Tiles and All apps.
 **Consequences**: removing the plugin leaves the block behind unless the user sets it to Off first (the README says
 so). The file, not config.toml, is the only record, so it is the same in every profile. Implementation:
 [architecture/launcher.md](../architecture/launcher.md#super-alone).
+
+**Update 2026-09-26**: the block is no longer added when the plugin first loads. The Omarchy marketplace's submission checklist
+requires that a plugin not change user configuration without explicit consent, so the first start's welcome screen carries a switch
+(on by default, worded to say what it writes) and ⚙ > Keys stays the way to change it. Existing installs keep what they have.

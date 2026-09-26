@@ -1,0 +1,22 @@
+// fixture: first-run
+// hypr: yes
+// The first start asks before it writes Super alone into Hyprland's bindings.lua: a switch on the welcome screen
+const f = Quickshell.env("HOME") + "/.config/hypr/bindings.lua";
+const mine = '-- mine\no.bind("SUPER + E", "Files", "nautilus")\n';
+const sw = () => findAll(welcome, c => c.label === "Open with Super: press and release it alone" && c.visible)[0];
+eq([root.welcomeOpen, root.welcomeFirstRun, root.superAvailable], [true, true, true], "the first start, with a bindings.lua to write to");
+eq(root.readFile(f), mine, "nothing was written by loading");
+ok(sw() !== undefined && sw().checked === true, "the welcome screen shows the switch, on");
+keyClick(Qt.Key_Return); wait(1000);
+ok(root.readFile(f).indexOf(">>> gona-launcher:super") > 0 && root.superMode === "tiles", "Start with it on adds Super alone");
+ok(root.readFile(f).startsWith(mine), "and keeps the person's own lines");
+// again from the start, with the switch off: nothing is added, and it stays off
+root.factoryReset(); wait(600);
+root.setSuperMode("off"); wait(500);
+eq(root.readFile(f), mine, "back to the person's file");
+ok(sw() !== undefined && sw().checked === true, "a factory reset asks again, with the switch on");
+root.welcomeSuper = false; wait(200);
+keyClick(Qt.Key_Return); wait(1000);
+eq([root.readFile(f), root.superMode], [mine, "off"], "with the switch off, Start writes nothing");
+eq(root.readFile(root.stateDir + "/super-key").trim(), "off", "and the choice is remembered, so it is not asked for again");
+finish();

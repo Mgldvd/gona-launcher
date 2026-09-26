@@ -1,6 +1,7 @@
 // ⚙ > Keys opens with the Super row, set apart, and its choices write bindings.lua
 // where: menu
 // hypr: yes
+menu.shell.setSuperMode("tiles"); wait(500); // nothing adds it on its own
 menu.tab = 6; wait(300);
 const rows = findAll(menu, c => c.label === "Open with Super: press and release it alone" && c.visible);
 eq(rows.length, 1, "the Super row is on the Keys tab");

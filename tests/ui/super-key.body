@@ -1,9 +1,12 @@
-// Super alone: added to bindings.lua the first time, changed and removed from ⚙ > Keys, and "Off" sticks
+// Super alone: never written by loading the plugin; added, changed and removed from ⚙ > Keys, and "Off" sticks
 // hypr: yes
 const f = Quickshell.env("HOME") + "/.config/hypr/bindings.lua";
 const mine = '-- mine\no.bind("SUPER + E", "Files", "nautilus")\n';
-eq([root.superAvailable, root.superMode], [true, "tiles"], "the first load adds Super alone, opening the tiles");
+eq([root.superAvailable, root.superMode], [true, "off"], "loading the plugin does not add Super alone: that needs the person's consent");
 wait(500);
+eq(root.readFile(f), mine, "bindings.lua is untouched");
+root.setSuperMode("tiles"); wait(500);
+eq(root.superMode, "tiles", "choosing Tiles in ⚙ > Keys adds it");
 let text = root.readFile(f);
 ok(text.startsWith(mine), "the person's own lines are kept");
 ok(text.indexOf('o.bind("SUPER + SUPER_L", "Gona Launcher", "omarchy-shell shell toggle gona.launcher", { release = true })') > 0, "the binding is in the file");

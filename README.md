@@ -34,7 +34,7 @@ Update it with `omarchy plugin update gona.launcher`. This is the `dev` branch (
 only the installable plugin. To work on the plugin from a clone of this repo, see
 [development](docs/development.md) (`tools/install.sh`).
 
-**Press and release Super alone** to open it: the first time it loads, the plugin adds that binding to
+**Press and release Super alone** to open it: on the first start a switch (on by default) adds that binding to
 `~/.config/hypr/bindings.lua` (a marked block of its own). Change it, point it at "All apps" or turn it off in
 ⚙ > Keys, the first row. Add the bar button in Omarchy's settings (Bar) or with `omarchy plugin enable gona.launcher
 <section>`. Right-click on the bar button

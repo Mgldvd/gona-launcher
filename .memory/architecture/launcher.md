@@ -30,8 +30,10 @@ A Hyprland binding, not a `keyAction`. Why: [decisions/0003-super-key-in-binding
 - The block between `-- >>> gona-launcher:super >>>` / `-- <<< gona-launcher:super <<<` in
   `~/.config/hypr/bindings.lua`; `KeyCombo.superModeOf()`/`withSuperMode()` read and rewrite it, the rest untouched.
 - `setSuperMode("off"|"tiles"|"allApps")` writes it and runs `hyprctl reload` in the same command.
-  `refreshSuperKey()` (at load and every `open()`) adds it once where that file exists; `stateDir/super-key` remembers
-  it was done, so "Off" sticks. The file is the only record (not config.toml, same in every profile).
+  `refreshSuperKey()` (at load and every `open()`) only READS it (and records a block that is already there); nothing adds
+  it on its own: the first start's welcome switch (`welcomeSuper`, on by default, `applyPreset()`) or ⚙ > Keys does, because
+  the Omarchy marketplace asks that a plugin not change user configuration without explicit consent. `stateDir/super-key`
+  remembers the choice, so "Off" sticks. Tests: `welcome-super.body`, `super-key*.body`. The file is the only record (not config.toml, same in every profile).
 - A Super-alone bind for `gona.launcher` written by hand outside the block is deleted when the block is written:
   two binds on one release toggle twice, so the launcher opens and closes at once ("it does not appear").
 - UI: the accent-framed first row of ⚙ > Keys. Tests: `tests/ui/super-key*.body`, `logic.test.mjs`.

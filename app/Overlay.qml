@@ -1109,9 +1109,10 @@ Item {
     // ---- Super alone opens the launcher (⚙ > Keys, first row) ----------------------------------------
     // A plugin cannot bind keys itself, so this is a marked block in Hyprland's bindings.lua
     // (KeyCombo.withSuperMode()); the file is the only record of it, the same for every profile and never
-    // in config.toml. The first time the plugin loads on a machine it adds the block ("tiles"), once:
-    // the `super-key` file in stateDir remembers that, so "Off" (or deleting the block by hand) sticks.
-    // Nothing happens where there is no bindings.lua (not Omarchy, or the tests' throw-away HOME).
+    // in config.toml. It is written only with the person's consent: a switch on the first start's welcome screen
+    // (`welcomeSuper`, on by default and worded to say what it does), or ⚙ > Keys later; loading the plugin never
+    // touches bindings.lua. The `super-key` file in stateDir remembers the choice, so "Off" (or deleting the block by
+    // hand) sticks. Nothing happens where there is no bindings.lua (not Omarchy, or the tests' throw-away HOME).
     readonly property string hyprBindings: Quickshell.env("HOME") + "/.config/hypr/bindings.lua"
     property string superMode: "off"       // "off" | "tiles" | "allApps", as the file says
     property bool superAvailable: false    // there is a bindings.lua to write to
@@ -1119,8 +1120,8 @@ Item {
         const text = readFile(hyprBindings);
         superAvailable = text.trim() !== "";
         superMode = KeyCombo.superModeOf(text);
-        if (!superAvailable || readFile(stateDir + "/super-key").trim() !== "") return;
-        if (superMode === "off") setSuperMode("tiles"); else writeFile(stateDir + "/super-key", superMode);
+        // a block that is already there is the person's choice: remember it (nothing is ever added here)
+        if (superAvailable && superMode !== "off" && readFile(stateDir + "/super-key").trim() === "") writeFile(stateDir + "/super-key", superMode);
     }
     function setSuperMode(mode) {
         const text = readFile(hyprBindings);
@@ -1254,6 +1255,7 @@ Item {
         tileMenuPath = null;
         welcomeIndex = 0;
         welcomeSaveOthers = false;
+        welcomeSuper = true;
         welcomeFirstRun = true;
         welcomeOpen = true;
     }
@@ -1269,6 +1271,7 @@ Item {
     property bool welcomeFirstRun: false  // shown because there is no configuration yet: Esc then starts with the recommended one
     property int welcomeIndex: 0          // the card chosen with the keyboard or a click
     property bool welcomeSaveOthers: false // also save the other presets as profiles
+    property bool welcomeSuper: true       // the first start's switch: add Super alone to Hyprland's bindings.lua (consent, see refreshSuperKey)
     // how many of the other presets fit as new profiles (none that already exist by that name)
     function presetsToSave(name) {
         const room = maxProfiles - 1 - profileNames.length;
@@ -1311,6 +1314,10 @@ Item {
             const others = presetsToSave(name);
             for (const other of others) writeFile(profilePath(other), presetText(other));
             setProfiles(profileNames.concat(others));
+        }
+        if (superAvailable) { // what the welcome screen's switch said (it was shown, on by default)
+            if (!welcomeSuper) setSuperMode("off");
+            else if (superMode === "off") setSuperMode("tiles");
         }
         welcomeOpen = false;
         welcomeFirstRun = false;

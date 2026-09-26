@@ -5,14 +5,15 @@ const sh = menu.shell;
 const keys = menu.tabs.map(t => t.key);
 ok(keys.indexOf("appearance") < 0 && keys.indexOf("menu") >= 0 && keys.indexOf("profiles") >= 0, "Menu and Profiles tabs, no Appearance");
 const shown = label => findAll(menu, c => c.label === label && c.visible).length > 0;
+const labelChips = () => findAll(menu, c => c.options !== undefined && c.options.some(o => o.value === "roman") && c.visible).length > 0; // how profile buttons are labelled
 menu.tab = keys.indexOf("menu"); wait(300);
 ok(shown("Menu background") && shown("Menu size"), "Menu: its background and size");
 ok(!shown("Browse ready-made profiles…") && !shown("Follow the Omarchy theme"), "and nothing else");
 menu.tab = keys.indexOf("profiles"); wait(300);
 ok(shown("Browse ready-made profiles…"), "Profiles: the ready-made profiles button");
-ok(!shown("Profile buttons") && !shown("Label profile buttons with"), "Profiles: the profile buttons switch is not here");
+ok(!shown("Profile buttons") && !labelChips(), "Profiles: the profile buttons switch is not here");
 menu.tab = keys.indexOf("buttons"); wait(300);
-ok(shown("Profile buttons") && shown("Label profile buttons with"), "Buttons: the profile buttons and their labels are here");
+ok(shown("Profile buttons") && labelChips(), "Buttons: the profile buttons and their labels are here");
 sh.showProfileButtons = true; sh.profileLabels = "roman"; sh.resetTab("buttons"); wait(100);
 eq([sh.showProfileButtons, sh.profileLabels], [false, "numbers"], "and Reset this tab on Buttons puts them back");
 menu.tab = keys.indexOf("colors"); wait(300);

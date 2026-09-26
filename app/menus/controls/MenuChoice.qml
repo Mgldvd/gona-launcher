@@ -34,6 +34,7 @@ Item {
         spacing: 8
 
         Text {
+            visible: row.label !== "" // a choice with no label is just its buttons (beside a switch it belongs to)
             text: row.label
             color: row.shell.mFg
             font.pixelSize: 13
