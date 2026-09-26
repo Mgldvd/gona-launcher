@@ -270,8 +270,11 @@ Item {
         if (field === "accent") return palette[0];
         if (field === "border") return hexFor("accent", pick("accent", null).v); // the accent, softly
         if (field === "appBg") return following ? omarchyColors.background : (lightMode ? "#eff1f5" : "#1e1e2e");
-        if (field === "menuBg") return following ? (omarchyColors.lighter_background || omarchyColors.selection || omarchyColors.background)
-                                                 : (lightMode ? "#ffffff" : "#313244"); // the ⚙/⋯ menus' own background
+        // the ⚙/⋯ menus' own background: the theme's slightly lighter surface, named `lighter_background` in the themes Omarchy
+        // ships and `lighter_bg` in the ones it generates from a picture. Never `selection`: in a generated theme it is the
+        // accent (a mid grey), which made the menu a grey slab with unreadable text
+        if (field === "menuBg") return following ? (omarchyColors.lighter_background || omarchyColors.lighter_bg || omarchyColors.background)
+                                                 : (lightMode ? "#ffffff" : "#313244");
         return ""; // tiles have no fill of their own: the app background shows through
     }
     // any value of a field as "#rrggbb"; "" = nothing (transparent)

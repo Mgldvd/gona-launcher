@@ -20,5 +20,7 @@ The overview is in [docs/architecture.md](../../docs/architecture.md#colours); t
 - Omarchy theme: `refreshOmarchy()` reads `~/.local/state/omarchy/current/theme/colors.toml` at start and every `open()`
   into `omarchyColors`. With `followTheme` and the theme's mode equal to the look (`following`), the swatches are the
   theme's accent, red, orange, yellow, green, cyan, blue, magenta (`paletteNames`), and `"system"` backgrounds are its
-  `background`/`lighter_background`; otherwise the fixed palettes. `"system"` menu background is `#313244` Dark /
+  `background` and, for the menus, `lighter_background` (the name in the themes Omarchy ships) or `lighter_bg` (the name in the ones
+  it generates from a picture, whose `selection` is the accent: never use `selection` as a surface, it made the menu a grey slab;
+  `tests/ui/theme-generated.body`); otherwise the fixed palettes. `"system"` menu background is `#313244` Dark /
   `#ffffff` Light.

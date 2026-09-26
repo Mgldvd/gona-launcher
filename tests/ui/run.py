@@ -15,7 +15,7 @@ A test starts with directives, one per line:
                          | first-run (no config.toml at all: the welcome screen shows; "none" writes a comment-only
                          config.toml so it does not)
     // where: launcher      launcher (TestCase inside the launcher window, the default) | menu (inside OptionsMenu)
-    // omarchy: light       the active Omarchy theme in the test's HOME: none (no theme, the default) | dark | light
+    // omarchy: light       the active Omarchy theme in the test's HOME: none (no theme, the default) | dark | light | generated
     // config: [appearance]\nmode = "auto"   extra lines for config.toml
     // profile: work        a profile "work" (icon_size 72) already saved and in use
     // usage: {"app-id": {"n": 3, "last": 1}}   launch counts already in usage.json

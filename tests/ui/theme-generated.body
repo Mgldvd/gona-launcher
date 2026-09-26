@@ -1,0 +1,9 @@
+// A theme Omarchy generated from a picture: it names the surface `lighter_bg` and its `selection` is the accent, so the
+// ⚙ and ⋯ menus must not use `selection` as their background (they were a grey slab with unreadable text)
+// omarchy: generated
+// config: [appearance]\nmode = "auto"
+eq([root.theme, root.lightMode, root.following], ["auto", false, true], "a generated dark theme is followed");
+eq(root.systemHex("menuBg"), "#242a36", "the menu takes the theme's lighter surface (lighter_bg), not its selection colour");
+ok(!root.menuLight, "so the menu is dark, like the theme");
+ok(root.mFg !== undefined && Math.abs(root.mFg.r - root.menuSurface.r) + Math.abs(root.mFg.g - root.menuSurface.g) + Math.abs(root.mFg.b - root.menuSurface.b) > 1.0, "and its text stands out from it");
+finish();
