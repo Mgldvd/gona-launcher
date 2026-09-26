@@ -559,9 +559,8 @@ Item {
             window: ["edge", "offset", "nextToBar"],
             effects: ["effect", "effectMs", "closeAnim", "reduceMotion", "speed", "fullFrom"],
             search: ["searchAll", "searchLabels", "filterFontSize"],
-            buttons: ["allAppsButton", "powerOffButton", "restartButton", "logoutButton", "powerButtonSize", "iconTheme"],
+            buttons: ["allAppsButton", "powerOffButton", "restartButton", "logoutButton", "showProfileButtons", "profileLabels", "powerButtonSize", "iconTheme"],
             menu: ["menuScale"],
-            profiles: ["showProfileButtons", "profileLabels"],
             search: ["searchAll", "searchLabels", "filterFontSize", "trackUsage", "usageOrder", "showUsageRow", "usageRowCount"]
         }[name] || [];
         for (const k of keys) resetSetting(k);
