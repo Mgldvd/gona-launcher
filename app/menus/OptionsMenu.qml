@@ -529,21 +529,6 @@ Rectangle {
                     checked: menu.shell.logoutButton
                     onToggled: menu.shell.logoutButton = !menu.shell.logoutButton
                 }
-                MenuToggle { // the saved profiles (⚙ > Profiles) as buttons in the same strip
-                    shell: menu.shell; fullWidth: menu.colW
-                    label: "Profile buttons"
-                    tip: "Shows your profiles (up to 5, the default first) in the strip, next to the other buttons, to switch with a click. Needs one saved profile (⚙ > Profiles). Hover a button for its name."
-                    checked: menu.shell.showProfileButtons
-                    onToggled: menu.shell.showProfileButtons = !menu.shell.showProfileButtons
-                }
-                MenuChoice {
-                    shell: menu.shell; fullWidth: menu.colW
-                    enabled: menu.shell.showProfileButtons // dimmed, not hidden, while they are off
-                    label: "Label profile buttons with"
-                    options: [{ text: "1  2  3", value: "numbers" }, { text: "A  B  C", value: "letters" }, { text: "I  II  III", value: "roman" }]
-                    current: menu.shell.profileLabels
-                    onChosen: value => menu.shell.profileLabels = value
-                }
                 // the styles, each drawn with its own power button on the launcher's background
                 Column {
                     width: col.width
@@ -585,15 +570,34 @@ Rectangle {
                         }
                     }
                 }
-                SliderRow {
-                    shell: menu.shell; fullWidth: menu.colW
-                    label: "Button size"
-                    showReset: true; resettable: !menu.shell.isDefault("powerButtonSize")
-                    onReset: menu.shell.resetSetting("powerButtonSize")
-                    unit: " px"
-                    from: 20; to: 56; step: 2
-                    value: menu.shell.powerButtonSize
-                    onPicked: v => menu.shell.setPowerButtonSize(v)
+                Column { // beside the tall "Button background": the size, and the profiles as buttons of the same strip
+                    width: menu.colW
+                    spacing: 16
+                    SliderRow {
+                        shell: menu.shell; fullWidth: menu.colW
+                        label: "Button size"
+                        showReset: true; resettable: !menu.shell.isDefault("powerButtonSize")
+                        onReset: menu.shell.resetSetting("powerButtonSize")
+                        unit: " px"
+                        from: 20; to: 56; step: 2
+                        value: menu.shell.powerButtonSize
+                        onPicked: v => menu.shell.setPowerButtonSize(v)
+                    }
+                    MenuToggle { // the saved profiles (⚙ > Profiles) as buttons in the same strip
+                        shell: menu.shell; fullWidth: menu.colW
+                        label: "Profile buttons"
+                        tip: "Shows your profiles (up to 5, the default first) in the strip, next to the other buttons, to switch with a click. Needs one saved profile (⚙ > Profiles). Hover a button for its name."
+                        checked: menu.shell.showProfileButtons
+                        onToggled: menu.shell.showProfileButtons = !menu.shell.showProfileButtons
+                    }
+                    MenuChoice {
+                        shell: menu.shell; fullWidth: menu.colW
+                        enabled: menu.shell.showProfileButtons // dimmed, not hidden, while they are off
+                        label: ""                              // beside the switch above: how they are labelled
+                        options: [{ text: "1  2  3", value: "numbers" }, { text: "A  B  C", value: "letters" }, { text: "I  II  III", value: "roman" }]
+                        current: menu.shell.profileLabels
+                        onChosen: value => menu.shell.profileLabels = value
+                    }
                 }
                 ColorField { // Line / Square line draw only a stroke, no fill of their own; this
                     shell: menu.shell; fullWidth: menu.colW // gives them one to sit on. Off ("Transparent")

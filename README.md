@@ -19,8 +19,10 @@ the [`dev` branch](https://github.com/Mgldvd/gona-launcher/tree/dev).
 omarchy plugin add https://github.com/Mgldvd/gona-launcher.git --enable
 ```
 
-Requires **Omarchy 4.0**. **Press and release Super alone** to open it (the first time it loads, the plugin adds that
-binding to `~/.config/hypr/bindings.lua`; change it or turn it off in ⚙ > Keys, the first row). Right-click on the bar
+Requires **Omarchy 4.0**; there are no other dependencies (the compiled effect shader ships with it). On the first start
+you choose how the launcher looks, and a switch there, **on by default**, adds the shortcut **Super alone** (press and release
+it) to `~/.config/hypr/bindings.lua`, in a marked block of its own; nothing is written to that file without it. Change or
+remove it any time in ⚙ > Keys, the first row. Right-click on the bar
 button opens a small menu (Settings, Reload, About, version). How to use it: [docs on `dev`](https://github.com/Mgldvd/gona-launcher/blob/dev/docs/usage.md).
 
 Update it with `omarchy plugin update gona.launcher`.
@@ -70,6 +72,12 @@ Set ⚙ > Keys > "Open with Super" to **Off** first (or delete the `gona-launche
 omarchy plugin remove gona.launcher
 rm -r ~/.config/gona-launcher ~/.local/state/gona-launcher    # optional: settings, tiles, profiles, usage counts
 ```
+
+## What it touches
+
+Its own settings in `~/.config/gona-launcher/` and its state in `~/.local/state/gona-launcher/`; and, only if you leave the
+switch above on (or set it in ⚙ > Keys), the marked `gona-launcher:super` block in `~/.config/hypr/bindings.lua`
+(followed by `hyprctl reload`). It makes no network requests of its own (About opens the project page in your browser) and needs no `sudo`.
 
 ## License
 
