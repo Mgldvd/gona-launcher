@@ -378,14 +378,9 @@ Rectangle {
                     options: [{ text: "Classic", value: "classic" }, { text: "Fade", value: "fade" }, { text: "Slide", value: "slide" },
                               { text: "Meet", value: "meet" }, { text: "Corners", value: "corners" }, { text: "Blocks", value: "blocks" },
                               { text: "Fluid", value: "fluid" }, { text: "Bounce", value: "bounce" }, { text: "Genie", value: "genie" },
-                              { text: "Dissolve", value: "dissolve" }, { text: "Glitch", value: "glitch" }]
-                    current: menu.shell.effect
-                    onChosen: value => menu.shell.effect = value
-                }
-                MenuChoice { // the effects of Omarchy's screensaver, the same choice as the row above
-                    shell: menu.shell; fullWidth: col.width
-                    label: "Terminal effects (from Omarchy's screensaver)"
-                    options: [{ text: "Matrix", value: "matrix" }, { text: "Decrypt", value: "decrypt" }, { text: "Synthgrid", value: "synthgrid" },
+                              { text: "Dissolve", value: "dissolve" }, { text: "Glitch", value: "glitch" },
+                              // the last ten are the effects of Omarchy's screensaver (docs/effects.md), in the same one list
+                              { text: "Matrix", value: "matrix" }, { text: "Decrypt", value: "decrypt" }, { text: "Synthgrid", value: "synthgrid" },
                               { text: "Spotlights", value: "spotlights" }, { text: "Laser etch", value: "laser" },
                               { text: "Blackhole", value: "blackhole" }, { text: "Fireworks", value: "fireworks" }, { text: "Rain", value: "rain" },
                               { text: "Beams", value: "beams" }, { text: "VHS tape", value: "vhs" }]
