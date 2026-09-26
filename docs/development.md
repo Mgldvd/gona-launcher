@@ -28,15 +28,32 @@ log is `journalctl --user _PID=<pid of quickshell -n -p /usr/share/omarchy/shell
 
 Work happens on `dev`, which holds everything: the plugin, docs, tests, tools, `.memory/`. `master` is production and
 is what `omarchy plugin add` clones: only `manifest.json`, `app/`, the license files, `preview.png`, a short README
-(written from `tools/release/README.md`), `CONTRIBUTING.md` and `.github/ISSUE_TEMPLATE/` (GitHub reads those from the default
-branch). The workflow `.github/workflows/verify.yml` runs `tests/verify.sh` (only what needs node) on every push to `dev`. A release
-is also tagged (`git tag -a vX.Y.Z <master commit>`, `gh release create vX.Y.Z --notes-file ...`) with the notes of
-[CHANGELOG.md](CHANGELOG.md). Never commit to `master` by hand; publish with
+(written from `tools/release/README.md`), `CHANGELOG.md`, `CONTRIBUTING.md` and `.github/ISSUE_TEMPLATE/` (GitHub reads those
+from the default branch). The workflow `.github/workflows/verify.yml` runs `tests/verify.sh` (only what needs node) on every push
+to `dev`. Never commit to `master` by hand, and **never rewrite or force-push it**: `omarchy plugin update` fetches `master` and
+only fast-forwards, so a rewritten history breaks every installed copy.
+
+### How people update, and what every commit owes them
+
+`omarchy plugin update gona.launcher` shows people the diff of `master` and asks; the version is at the bottom of the bar
+button's right-click menu. What they can read is **`CHANGELOG.md`** (at the root of `master`) and the version in `manifest.json`.
+So:
+
+- **Every commit that changes `app/` or `manifest.json` adds its line under `## Unreleased` in `CHANGELOG.md`, in the same
+  commit**, written for the person updating (what they will notice, not how it was done). A pre-commit hook checks it: turn it on
+  once with `git config core.hooksPath tools/hooks` (`SKIP_CHANGELOG=1` skips it on purpose). Commits that only touch docs, tests
+  or tools need none.
+- **A release** renames `## Unreleased` to `## X.Y.Z - date` (and leaves a new empty `## Unreleased`), raises `"version"` in
+  `manifest.json` (patch for fixes, minor for features, major for changes that break settings), then:
 
 ```sh
-tools/release.sh          # on a clean dev: runs tests/verify.sh, copies the production files to master, commits there
-git push origin master    # when you mean it (users get it with omarchy plugin update)
+tools/release.sh          # on a clean dev: verify.sh, then master gets the production files, and vX.Y.Z is tagged; it refuses
+                          # without a CHANGELOG.md section for the version, or when app/ changed since that version was tagged
+git push origin dev master vX.Y.Z
+gh release create vX.Y.Z --title "Gona Launcher X.Y.Z" --notes-file <(tools/release-notes.sh) --latest
 ```
+
+- Once the plugin is listed in the [Omarchy marketplace](#the-omarchy-marketplace), a new version is also published there.
 
 ## Tests
 

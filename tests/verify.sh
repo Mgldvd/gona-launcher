@@ -42,6 +42,14 @@ else
     echo "SKIP  logic unit tests -- 'node' is not on PATH"
 fi
 
+# every version has its section in CHANGELOG.md (what people read when they update), and the file has an Unreleased one
+VERSION="$(sed -n 's/.*"version": *"\([^"]*\)".*/\1/p' "$ROOT/manifest.json")"
+if [ -f "$ROOT/CHANGELOG.md" ] && grep -q "^## $VERSION\b" "$ROOT/CHANGELOG.md" && grep -q "^## Unreleased" "$ROOT/CHANGELOG.md"; then
+    ok "CHANGELOG.md has a section for $VERSION and an Unreleased one"
+else
+    fail "CHANGELOG.md" "needs a '## $VERSION' section (manifest.json's version) and a '## Unreleased' one"
+fi
+
 # the committed .qsb must be what tools/build-shaders.sh makes from the source (qsb output is deterministic)
 if command -v qsb >/dev/null 2>&1 || [ -x /usr/lib/qt6/bin/qsb ]; then
     TMP="$(mktemp -d)"

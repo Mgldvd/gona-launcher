@@ -15,6 +15,10 @@ Gona Launcher: a highly configurable app launcher (apps in tiles laid out as a s
 - The shell under test is the user's **live desktop session**: read its log after every sync, then run
   `omarchy restart shell` (hot reload keeps stale code; the user allowed it every time), never drive it with `wtype`/`ydotool` ([details](.memory/workflow/live-shell.md)).
 - Add a UI test for every bug found by hand.
+- **Every commit that changes `app/` or `manifest.json` carries its line under "Unreleased" in `CHANGELOG.md`** (a hook in
+  `tools/hooks` checks it; `git config core.hooksPath tools/hooks`), and a release raises the version in `manifest.json`, dates that
+  section, tags and publishes, so people can update with `omarchy plugin update` and read what changed
+  ([how](docs/development.md#how-people-update-and-what-every-commit-owes-them)). Never rewrite `master`: updates only fast-forward.
 - Never commit videos or large images: they go to the `media` GitHub Release
   ([how](docs/development.md#media-videos-and-large-images)).
 - Work on `dev`. `master` is production only (what `omarchy plugin add` installs): never commit to it by hand, publish

@@ -1,0 +1,11 @@
+#!/bin/sh
+# Every commit that changes the plugin (app/ or manifest.json) carries its line in CHANGELOG.md, so people who update it can
+# read what changed. Turn the hook on once: git config core.hooksPath tools/hooks
+# A commit that only touches docs, tests or tools needs no line. To skip it on purpose (a typo in a comment): SKIP_CHANGELOG=1 git commit
+[ -n "$SKIP_CHANGELOG" ] && exit 0
+staged="$(git diff --cached --name-only)"
+echo "$staged" | grep -Eq '^(app/|manifest\.json$)' || exit 0
+echo "$staged" | grep -qx 'CHANGELOG.md' && exit 0
+echo "pre-commit: this commit changes app/ or manifest.json, so it needs a line under \"Unreleased\" in CHANGELOG.md" >&2
+echo "            (what a person updating the plugin would notice). Add it and stage CHANGELOG.md, or SKIP_CHANGELOG=1 to skip." >&2
+exit 1

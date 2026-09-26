@@ -30,7 +30,8 @@ Requires **Omarchy 4.0** (its `omarchy-shell` with shell plugins, `omarchy plugi
 **Quickshell 0.3.1**, Qt 6.11 and Hyprland 0.56, on Arch. The plugin needs nothing else at run time: the effect
 shader ships compiled. To change the shader you also need `qsb` (package `qt6-shadertools`).
 
-Update it with `omarchy plugin update gona.launcher`. This is the `dev` branch (source, docs, tests); `master` holds
+Update it with `omarchy plugin update gona.launcher` (see the [changelog](CHANGELOG.md); if the launcher looks unchanged
+afterwards, `omarchy restart shell`). This is the `dev` branch (source, docs, tests); `master` holds
 only the installable plugin. To work on the plugin from a clone of this repo, see
 [development](docs/development.md) (`tools/install.sh`).
 

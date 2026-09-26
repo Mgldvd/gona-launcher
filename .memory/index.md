@@ -17,4 +17,4 @@ Read the file for the area you are about to touch, not all of them.
 | [architecture/effects.md](architecture/effects.md) | The opening effects, `FxLayer`, the shader |
 | [architecture/menus.md](architecture/menus.md) | The ⚙ and ⋯ menus, their controls and previews |
 | [architecture/launcher.md](architecture/launcher.md) | Strip, keyboard shortcuts, Super alone, filter and selection, tile minimum size |
-| [decisions/](decisions/) | Why things are the way they are (Omarchy port, one launcher window, Super key, master = production) |
+| [decisions/](decisions/) | Why things are the way they are (Omarchy port, one launcher window, Super key, master = production, updates and the changelog) |
