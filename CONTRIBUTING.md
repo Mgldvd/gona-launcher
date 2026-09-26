@@ -26,6 +26,8 @@ tests/verify.sh    # the manifest, the unit tests of app/lib/*.js and the shader
 tests/ui.sh        # the UI tests, in a throw-away instance: it needs a Wayland session, and do not type while it runs
 ```
 
+- A change to `app/` or `manifest.json` adds its line under "Unreleased" in [CHANGELOG.md](CHANGELOG.md) in the same commit (what a person
+  updating the plugin will notice). Turn the hook that checks it on once: `git config core.hooksPath tools/hooks`.
 - A bug found by hand gets a test in `tests/ui/` (see [.memory/workflow/ui-tests.md](.memory/workflow/ui-tests.md)).
 - Every UI string is English. `docs/` and the README change with the code (settings in `docs/configuration.md`, keys and menus in `docs/usage.md`).
 - Commit messages follow Conventional Commits with the project's symbols, like the recent history (`feat(ui): ▲ - ...`, `fix(...)`, `docs: □ - ...`).

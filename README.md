@@ -25,7 +25,9 @@ it) to `~/.config/hypr/bindings.lua`, in a marked block of its own; nothing is w
 remove it any time in ⚙ > Keys, the first row. Right-click on the bar
 button opens a small menu (Settings, Reload, About, version). How to use it: [docs on `dev`](https://github.com/Mgldvd/gona-launcher/blob/dev/docs/usage.md).
 
-Update it with `omarchy plugin update gona.launcher`.
+Update it with `omarchy plugin update gona.launcher`: it shows what changed and asks first (the [changelog](CHANGELOG.md) says
+what each version brings, and the version is at the bottom of the bar button's right-click menu). If the launcher looks unchanged
+afterwards, `omarchy restart shell` loads the new code.
 
 ## Video
 
