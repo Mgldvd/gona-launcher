@@ -4,7 +4,7 @@
 const sh = menu.shell;
 menu.tab = menu.tabs.findIndex(t => t.key === "effects"); wait(400);
 eq(sh.effect, "classic", "starts on Classic");
-const choice = findAll(menu, c => c.label === "Effect" && c.chosen !== undefined)[0];
+const choice = findAll(menu, c => c.label !== undefined && String(c.label).indexOf("Effect") === 0 && c.chosen !== undefined)[0];
 const flow = findAll(choice, c => c.spacing === 6 && c.children.length > 3)[0];
 function chip(value) { return findAll(flow, c => c.modelData !== undefined).filter(c => c.modelData.value === value)[0]; }
 const row = findAll(menu, c => c.label === "Duration" && c.pick !== undefined)[0];
@@ -34,4 +34,9 @@ const text = sh.readFile(sh.configPath);
 ok(text.indexOf('effect = "glitch"') >= 0 && text.indexOf("effect_ms = 1000") >= 0 && text.indexOf("animate_close = false") >= 0, "the three are written to config.toml");
 click(findAll(menu, c => c.label === "Reset this tab")[0]);
 eq([sh.effect, sh.effectMs, sh.slideSpeed, sh.closeAnim], ["classic", 700, 110, true], "Reset this tab puts them back");
+// with Reduce motion on, the tab says why an effect shows nothing
+sh.reduceMotion = true; wait(200);
+ok(findAll(menu, c => c.text !== undefined && String(c.text).indexOf("Reduce motion is on") === 0 && c.visible).length === 1, "the preview says Reduce motion is on");
+ok(String(choice.label).indexOf("not shown while Reduce motion is on") >= 0, "and so does the Effect row");
+sh.reduceMotion = false; wait(200);
 finish();
