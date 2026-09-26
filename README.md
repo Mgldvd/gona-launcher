@@ -77,7 +77,7 @@ rm -r ~/.config/gona-launcher ~/.local/state/gona-launcher    # optional: settin
 
 Its own settings in `~/.config/gona-launcher/` and its state in `~/.local/state/gona-launcher/`; and, only if you leave the
 switch above on (or set it in ⚙ > Keys), the marked `gona-launcher:super` block in `~/.config/hypr/bindings.lua`
-(followed by `hyprctl reload`). It makes no network requests of its own (About opens the project page in your browser) and needs no `sudo`.
+(followed by `hyprctl reload`). It makes no network requests of its own (About opens the project page in your browser) and asks for no elevated privileges.
 
 ## License
 
