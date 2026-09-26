@@ -1,0 +1,20 @@
+// ⚙ > Menu holds only the menu's own look, ⚙ > Profiles the whole configurations; {"tab":"appearance"} (the old
+// tab) opens Profiles; "Follow the Omarchy theme" moved to Colors and its "Reset this tab" resets it
+// where: menu
+const sh = menu.shell;
+const keys = menu.tabs.map(t => t.key);
+ok(keys.indexOf("appearance") < 0 && keys.indexOf("menu") >= 0 && keys.indexOf("profiles") >= 0, "Menu and Profiles tabs, no Appearance");
+const shown = label => findAll(menu, c => c.label === label && c.visible).length > 0;
+menu.tab = keys.indexOf("menu"); wait(300);
+ok(shown("Menu background") && shown("Menu size"), "Menu: its background and size");
+ok(!shown("Browse ready-made profiles…") && !shown("Follow the Omarchy theme"), "and nothing else");
+menu.tab = keys.indexOf("profiles"); wait(300);
+ok(shown("Browse ready-made profiles…"), "Profiles: the ready-made profiles button");
+menu.tab = keys.indexOf("colors"); wait(300);
+ok(shown("Follow the Omarchy theme"), "Colors: Follow the Omarchy theme");
+sh.followTheme = false; sh.resetTab("colors"); wait(100);
+eq(sh.followTheme, true, "Reset this tab on Colors turns it back on");
+sh.optionsOpen = false; wait(300);
+sh.open('{"tab":"appearance"}'); wait(400);
+eq(menu.tabs[menu.tab].key, "profiles", "the old tab name opens Profiles");
+finish();

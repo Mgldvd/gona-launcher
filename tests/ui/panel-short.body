@@ -1,0 +1,7 @@
+// config: [window]\nmode = "bottom"\n[window.panels]\nbottom = [65, 15, 10]
+// A short panel (a dock, 15 % high) is kept: panel sizes go down to 5 %, not 20 % as they did, which threw the
+// Dock preset's size away and opened it at half the screen
+eq([root.edge, root.panelW, root.panelH, root.offset], ["bottom", 65, 15, 10], "the 15 % high panel is read as it is");
+root.setPanel(65, 2); wait(100);
+eq(root.panelH, 5, "and the menu's slider stops at 5 %");
+finish();

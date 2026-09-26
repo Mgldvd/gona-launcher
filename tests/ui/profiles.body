@@ -1,0 +1,38 @@
+// Profiles: save, switch, keep each one's own settings, delete, refuse bad names, open on one
+const state = () => root.readFile(root.stateDir + "/profile").trim();
+eq([root.activeProfile, root.profileNames], ["", []], "starts on the default profile with none saved");
+root.setIcon(40); root.saveNow(); wait(700);
+ok(root.createProfile("work"), "a profile is saved from what is on screen");
+wait(700);
+eq([root.activeProfile, root.profileNames, state()], ["work", ["work"], "work"], "and becomes the one in use, remembered in the state file");
+ok(root.readFile(root.profilePath("work")).indexOf("icon_size = 40") >= 0, "its file has the settings it was saved with");
+root.setIcon(64); root.saveNow(); wait(900);
+ok(root.readFile(root.profilePath("work")).indexOf("icon_size = 64") >= 0, "changes now go to the profile's file");
+ok(root.readFile(root.configPath).indexOf("icon_size = 64") >= 0, "(configPath is the profile's file)");
+ok(root.readFile(root.profilePath("")).indexOf("icon_size = 64") < 0, "and not to config.toml");
+ok(root.switchProfile(""), "switching back to the default works");
+wait(700);
+eq([root.activeProfile, root.iconSize, state()], ["", 40, ""], "the default has its own settings (icon 40) and is remembered");
+ok(root.switchProfile("work"), "and to the profile again");
+wait(500);
+eq([root.activeProfile, root.iconSize], ["work", 64], "the profile kept its own icon size (64)");
+// bad names and duplicates
+for (const bad of ["", "a/b", "../x", "has space", "default", "x".repeat(33)]) ok(!root.createProfile(bad), "refused name: " + JSON.stringify(bad.slice(0, 12)));
+ok(!root.createProfile("work") && root.profileFailed, "a name in use is refused");
+ok(!root.switchProfile("nothing") && root.profileFailed, "switching to a profile that does not exist is refused");
+eq(root.activeProfile, "work", "and nothing changed");
+// open on a profile from the command
+root.switchProfile(""); wait(500);
+root.hide(); wait(600);
+root.open('{"profile":"work"}'); wait(700);
+eq([root.activeProfile, root.opened], ["work", true], "open({profile}) switches and opens");
+root.hide(); wait(600);
+root.open('{"profile":"default"}'); wait(700);
+eq(root.activeProfile, "", "\"default\" goes back to config.toml");
+// delete the one in use: back on the default, file gone
+root.switchProfile("work"); wait(500);
+ok(root.deleteProfile("work"), "a profile can be deleted");
+wait(500);
+eq([root.activeProfile, root.profileNames, root.readFile(root.profilePath("work"))], ["", [], ""], "the default is in use again and the file is gone");
+eq(root.iconSize, 40, "with the default's own settings");
+finish();

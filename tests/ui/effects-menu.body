@@ -1,0 +1,36 @@
+// ⚙ > Effects: choosing an effect, its duration (the length of the effect in use), Animate closing, Reset this tab
+// where: menu
+// edge: top
+const sh = menu.shell;
+menu.tab = menu.tabs.findIndex(t => t.key === "effects"); wait(400);
+eq(sh.effect, "classic", "starts on Classic");
+const choice = findAll(menu, c => c.label === "Effect" && c.chosen !== undefined)[0];
+const flow = findAll(choice, c => c.spacing === 6 && c.children.length > 3)[0];
+function chip(value) { return findAll(flow, c => c.modelData !== undefined).filter(c => c.modelData.value === value)[0]; }
+const row = findAll(menu, c => c.label === "Duration" && c.pick !== undefined)[0];
+const track = findAll(row, c => c.moved !== undefined && c.visible)[0];
+function dragTo(fraction) { mousePress(track, track.width * fraction, 10); mouseMove(track, track.width * fraction, 10); mouseRelease(track, track.width * fraction, 10); wait(200); }
+
+click(chip("genie"));
+eq(sh.effect, "genie", "clicking Genie selects it");
+click(chip("meet"));
+eq(sh.effect, "meet", "the basic ones are in the same row");
+click(chip("genie"));
+dragTo(0.5);
+eq([sh.effectMs, sh.slideSpeed], [1000, 110], "the slider sets the effect's length and leaves Classic's alone");
+click(findAll(menu, c => c.label !== undefined && String(c.label).indexOf("Terminal effects") === 0 && c.chosen !== undefined).map(c => findAll(c, d => d.modelData !== undefined && d.modelData.value === "laser")[0])[0]);
+eq(sh.effect, "laser", "the terminal effects have their own row and set the same choice");
+click(chip("classic"));
+dragTo(0.25);
+eq([sh.effectMs, sh.slideSpeed], [1000, 500], "on Classic it sets Classic's length instead");
+click(chip("glitch"));
+const closing = findAll(menu, c => c.label === "Animate closing" && c.checked !== undefined)[0];
+eq(sh.closeAnim, true, "closing is animated by default");
+click(closing);
+eq(sh.closeAnim, false, "the switch turns closing animation off");
+sh.saveNow(); wait(700);
+const text = sh.readFile(sh.configPath);
+ok(text.indexOf('effect = "glitch"') >= 0 && text.indexOf("effect_ms = 1000") >= 0 && text.indexOf("animate_close = false") >= 0, "the three are written to config.toml");
+click(findAll(menu, c => c.label === "Reset this tab")[0]);
+eq([sh.effect, sh.effectMs, sh.slideSpeed, sh.closeAnim], ["classic", 700, 110, true], "Reset this tab puts them back");
+finish();

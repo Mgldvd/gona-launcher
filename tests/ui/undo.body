@@ -1,0 +1,21 @@
+// Undo / redo of the tile edits: the keys, the history, and what is saved
+const first = JSON.stringify(root.layout);
+root.split([], "h"); wait(150);
+const second = JSON.stringify(root.layout);
+ok(first !== second && root.undoSteps === 1, "a split is one undo step");
+keyClick(Qt.Key_Z, Qt.ControlModifier); wait(200);
+eq([JSON.stringify(root.layout), root.undoSteps, root.redoSteps], [first, 0, 1], "Ctrl+Z takes it back");
+keyClick(Qt.Key_Z, Qt.ControlModifier | Qt.ShiftModifier); wait(200);
+eq([JSON.stringify(root.layout), root.undoSteps, root.redoSteps], [second, 1, 0], "Ctrl+Shift+Z puts it back");
+keyClick(Qt.Key_Z, Qt.ControlModifier); wait(200);
+root.setTileTitle([], "hello"); wait(100);
+eq(root.redoSteps, 0, "a new edit clears what could be redone");
+keyClick(Qt.Key_Z, Qt.ControlModifier); wait(200);
+root.saveNow(); wait(600);
+ok(root.readFile(root.configPath).indexOf("hello") < 0, "the undone tiles are what config.toml holds");
+root.commit(JSON.parse(JSON.stringify(root.layout))); wait(50);
+eq(root.undoSteps, 0, "committing the same tiles again is not a step");
+for (let i = 0; i < 60; i++) root.setTileTitle([], "t" + i);
+eq(root.undoSteps, 50, "the history keeps the last 50 steps");
+// a divider drag is committed once, on release
+finish();

@@ -1,0 +1,30 @@
+// ⚙ > Profiles > "Reset to factory settings": asks twice, wipes the settings, tiles, profiles and usage, keeps a copy of
+// the folder, and brings the first start's welcome screen back
+// where: menu
+const sh = menu.shell;
+const state = () => sh.readFile(sh.stateDir + "/profile").trim();
+sh.setIcon(32); sh.commit({ type: "leaf", ids: ["foot"], title: "Mine" }); sh.saveNow(); wait(600);
+ok(sh.createProfile("work"), "a profile exists");
+wait(600);
+sh.noteLaunch("foot"); wait(1800);
+menu.tab = menu.tabs.findIndex(t => t.key === "profiles"); wait(400);
+const btn = () => findAll(menu, c => c.label !== undefined && (String(c.label).indexOf("Reset to factory") === 0 || String(c.label).indexOf("Yes, erase") === 0) && c.visible)[0];
+const cancel = () => findAll(menu, c => c.label === "Cancel" && c.visible)[0];
+ok(btn() !== undefined, "the Profiles tab has the button");
+click(btn()); wait(200);
+ok(String(btn().label).indexOf("Yes, erase") === 0 && cancel() !== undefined, "the first click only asks again, with a Cancel");
+eq([sh.iconSize, sh.profileNames, sh.welcomeOpen], [32, ["work"], false], "and nothing has changed yet");
+click(cancel()); wait(200);
+ok(String(btn().label).indexOf("Reset to factory") === 0 && cancel() === undefined, "Cancel goes back to the first state");
+click(btn()); click(btn()); wait(1200);
+eq([sh.welcomeOpen, sh.welcomeFirstRun, sh.optionsOpen], [true, true, false], "the second click brings the first start's welcome screen back, in place of the menu");
+eq([sh.activeProfile, sh.profileNames, state()], ["", [], ""], "no profile is left, and the default is in use");
+eq([sh.iconSize, sh.layout], [48, { type: "leaf", ids: [] }], "settings and tiles are the defaults");
+eq(sh.readFile(sh.configPath), "", "config.toml is gone: nothing is written until a preset is chosen");
+eq(sh.readFile(sh.profilePath("work")), "", "and so is the saved profile");
+eq(Object.keys(sh.usageData).length, 0, "the usage counts are cleared");
+// Esc there starts with Omarchy, as on a first start
+sh.closeWelcome(); wait(900);
+eq([sh.welcomeOpen, sh.iconSize], [false, 40], "Esc starts with the Omarchy preset");
+ok(sh.readFile(sh.configPath).indexOf('title = "Web"') >= 0, "which is written to config.toml");
+finish();

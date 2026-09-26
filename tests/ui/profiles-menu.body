@@ -1,0 +1,29 @@
+// ⚙ > Profiles: the profiles with the mouse and the keyboard, and "Browse ready-made profiles"
+// where: menu
+const sh = menu.shell;
+menu.tab = menu.tabs.findIndex(t => t.key === "profiles"); wait(400);
+eq(menu.tabs.map(t => t.t).slice(-2), ["Menu", "Profiles"], "the old Appearance tab is now Menu and Profiles");
+const input = findAll(menu, c => c.maximumLength === 32 && c.visible)[0];
+const saveBtn = findAll(menu, c => c.label === "Save a copy as new profile")[0];
+click(input); keyClick(Qt.Key_U); keyClick(Qt.Key_I); wait(100);
+click(saveBtn); wait(500);
+eq([sh.activeProfile, sh.profileNames], ["ui", ["ui"]], "typing a name and clicking Save a copy as new profile saves it");
+ok(findAll(menu, c => c.text === "ui" && c.visible).length > 0, "and it appears as a chip");
+const chipDefault = findAll(menu, c => c.text === "default" && c.visible && c.font && c.font.pixelSize === 12)[0];
+click(chipDefault); wait(400);
+eq(sh.activeProfile, "", "clicking the default chip switches to it");
+const chipUi = findAll(menu, c => c.text === "ui" && c.visible && c.font && c.font.pixelSize === 12)[0];
+click(chipUi); wait(400);
+eq(sh.activeProfile, "ui", "clicking a profile chip switches to it");
+const del = findAll(menu, c => c.label !== undefined && String(c.label).indexOf("Delete \"ui\"") === 0)[0];
+click(del);
+ok(String(del.label).indexOf("Yes, delete") === 0 && sh.activeProfile === "ui", "Delete asks once more");
+click(del); wait(400);
+eq([sh.activeProfile, sh.profileNames], ["", []], "the second click deletes it and goes back to the default");
+click(input); keyClick(Qt.Key_Escape); wait(200);
+ok(sh.optionsOpen, "Esc in the name field leaves the field, not the menu");
+const presetBtn = findAll(menu, c => c.label === "Browse ready-made profiles…" && c.visible)[0];
+ok(presetBtn !== undefined, "the tab has \"Browse ready-made profiles\"");
+click(presetBtn); wait(300);
+eq([sh.welcomeOpen, sh.welcomeFirstRun, sh.optionsOpen], [true, false, false], "it opens the ready-made profiles in place of the menu");
+finish();

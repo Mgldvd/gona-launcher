@@ -1,0 +1,17 @@
+// ⚙ > Keys opens with the Super row, set apart, and its choices write bindings.lua
+// where: menu
+// hypr: yes
+menu.tab = 6; wait(300);
+const rows = findAll(menu, c => c.label === "Open with Super: press and release it alone" && c.visible);
+eq(rows.length, 1, "the Super row is on the Keys tab");
+const row = rows[0];
+const keyRows = findAll(menu, c => c.visible && c.modelData !== undefined && c.modelData.name === "allApps" && c.combo !== undefined);
+ok(keyRows.length === 1 && row.mapToItem(menu, 0, 0).y < keyRows[0].mapToItem(menu, 0, 0).y, "it comes before the shortcuts");
+eq(row.current, "tiles", "it shows what bindings.lua says");
+const allBtn = findAll(row, c => c.modelData !== undefined && c.modelData.value === "allApps")[0];
+click(allBtn); wait(500);
+eq(menu.shell.superMode, "allApps", "clicking All apps changes the binding");
+ok(menu.shell.readFile(menu.shell.hyprBindings).indexOf("allApps") > 0, "and writes it");
+console.log("UI-INFO pageH " + menu.pageH + " keys " + page6.natural);
+ok(menu.pageH < 520, "every tab still fits a 768 px screen (" + menu.pageH + ")");
+finish();

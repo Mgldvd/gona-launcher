@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+#
+# Universal commit-msg hook: strips AI co-authorship / attribution trailers
+# from a commit message before the commit is finalized.
+#
+# Install as either:
+#   - a global hook: git config --global core.hooksPath ~/.git-hooks
+#     (then this file lives at ~/.git-hooks/commit-msg)
+#   - a per-project hook: .git/hooks/commit-msg
+#
+# Git passes the path to the commit message file as $1.
+
+set -euo pipefail
+
+MSG_FILE="$1"
+[ -f "$MSG_FILE" ] || exit 0
+
+TMP_FILE="$(mktemp)"
+trap 'rm -f "$TMP_FILE"' EXIT
+
+# Line-level patterns: any line matching one of these is dropped outright.
+# Case-insensitive, extended regex.
+LINE_PATTERNS=(
+  '^Co-Authored-By:.*'
+  '^Co-authored-by:.*'
+  '^Signed-off-by:.*(claude|copilot|cursor|codex|chatgpt|gpt-[0-9]|openai|anthropic|gemini|bard|ai assistant|ai-assistant)'
+  '^Generated[ -]with.*'
+  '^🤖.*Generated.*'
+  '^Co-Generated[ -]by.*'
+  '^Created[ -](with|by).*(claude|copilot|cursor|codex|chatgpt|gpt-[0-9]|openai|anthropic|gemini|ai assistant|ai-assistant|windsurf|tabnine|amazon q|aider)'
+  '^AI-Generated:.*'
+  '^AI-Assisted:.*'
+  '^Assisted-by:.*'
+  '^Reviewed-by:.*(claude|copilot|cursor|codex|chatgpt|openai|anthropic|gemini)'
+  '^\[claude-code\].*'
+  '^\[copilot\].*'
+  '^\[cursor\].*'
+  '^\[codex\].*'
+  '.*claude\.ai/code.*'
+  '.*claude-session:.*'
+)
+
+# Build a single ERE alternation for grep -viE (fast path), then double check
+# line by line so we can log what got stripped without partial-line mangling.
+JOINED="$(IFS='|'; echo "${LINE_PATTERNS[*]}")"
+
+STRIPPED_ANY=0
+while IFS= read -r line || [ -n "$line" ]; do
+  if echo "$line" | grep -qiE "$JOINED"; then
+    STRIPPED_ANY=1
+    continue
+  fi
+  echo "$line" >> "$TMP_FILE"
+done < "$MSG_FILE"
+
+# Collapse trailing blank lines left behind by removed trailers, but keep
+# exactly one trailing newline.
+sed -e :a -e '/^\n*$/{$d;N;ba' -e '}' "$TMP_FILE" > "${TMP_FILE}.clean" 2>/dev/null \
+  || cp "$TMP_FILE" "${TMP_FILE}.clean"
+
+cat "${TMP_FILE}.clean" > "$MSG_FILE"
+rm -f "${TMP_FILE}.clean"
+
+if [ "$STRIPPED_ANY" -eq 1 ] && [ -t 1 ]; then
+  echo "commit-convention: removed AI co-author/attribution trailer(s) from commit message." >&2
+fi
+
+exit 0

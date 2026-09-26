@@ -1,0 +1,26 @@
+# Gona Launcher preset: Focus.
+# A small centered window with one row of the tools to work with: terminal, editor, browser, files, notes, in one
+# titled tile with large icons. Square corners, no buttons, the Bounce opening; typing still finds any installed app.
+version = 1
+
+[window]
+width = 900
+height = 190
+effect = "bounce"
+effect_ms = 500
+
+[tiles]
+icon_size = 48
+
+[search]
+all_apps = true
+
+[layout]
+type = "leaf"
+centerH = true
+centerV = true
+title = "Focus"
+titleBold = true
+cBorder = { v = 4, a = 85 }
+cBg = { v = 4, a = 22 }
+ids = ["foot", "com.mitchellh.ghostty", "nvim", "code", "dev.zed.Zed", "chromium", "org.gnome.Nautilus", "obsidian"]

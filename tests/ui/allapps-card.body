@@ -1,0 +1,11 @@
+// The centred window grows to the screen for "All apps" too, the same card (its content is not rebuilt), and
+// shrinks back to its own size
+const w0 = card.width, h0 = card.height, loaded = findAll(card, c => c.dragOverlay !== undefined)[0];
+keyClick(Qt.Key_A, Qt.ControlModifier); wait(180);
+ok(card.width > w0 + 20 && card.width < root.targetScreen.width - 40, "halfway it is between its size and the screen (" + Math.round(card.width) + " px)");
+wait(700);
+eq([card.width, card.height], [root.targetScreen.width - 2 * root.sharedOffset, root.targetScreen.height - 2 * root.sharedOffset], "then the whole screen, less the offset");
+ok(findAll(card, c => c.dragOverlay !== undefined)[0] === loaded, "the same content all along, not rebuilt");
+keyClick(Qt.Key_Escape); wait(100); keyClick(Qt.Key_Escape); wait(900); // the first Esc clears the selection
+eq([root.allAppsOpen, card.width, card.height], [false, w0, h0], "Esc (after the selection): back to its own size");
+finish();

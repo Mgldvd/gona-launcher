@@ -1,0 +1,22 @@
+// config.toml edited by hand while the launcher runs is read again; the launcher's own writes are not
+const path = root.configPath;
+const dir = Quickshell.env("HOME") + "/.config/gona-launcher";
+root.setIcon(52); root.saveNow(); wait(1600);
+eq(root.iconSize, 52, "a change made in the launcher stays (its own write is not read back)");
+// 1. edited in place, with a comment of the person's own
+Quickshell.execDetached(["sh", "-c", "printf '# mine\\n[tiles]\\nicon_size = 72\\n' > \"$HOME/.config/gona-launcher/config.toml\""]); wait(1500);
+eq(root.iconSize, 72, "an edit in place is picked up");
+ok(root.readFile(path).indexOf("# mine") >= 0, "and the file is not rewritten (the comment is still there)");
+ok(root.transferMessage.indexOf("reloaded") >= 0 && !root.transferFailed, "the menu says it was reloaded");
+// 2. swapped in like an editor saves it (write a new file, rename over the old one)
+Quickshell.execDetached(["sh", "-c", "printf '[tiles]\\nicon_size = 84\\n' > \"$HOME/.config/gona-launcher/new.toml\" && mv \"$HOME/.config/gona-launcher/new.toml\" \"$HOME/.config/gona-launcher/config.toml\""]); wait(1500);
+eq(root.iconSize, 84, "a file swapped in by rename is picked up");
+// 3. not valid TOML: refused, settings stay
+Quickshell.execDetached(["sh", "-c", "printf '[tiles\\nicon_size = 40\\n' > \"$HOME/.config/gona-launcher/config.toml\""]); wait(1500);
+eq(root.iconSize, 84, "a broken edit is ignored");
+ok(root.transferFailed && root.transferMessage.indexOf("not valid TOML") >= 0, "and the menu says why");
+// 4. the launcher's next change writes a valid file again
+root.setIcon(60); root.saveNow(); wait(1500);
+eq(root.iconSize, 60, "a later change in the launcher is not undone by the old edit");
+ok(root.readFile(path).indexOf("icon_size = 60") >= 0 && root.readFile(path).indexOf("[tiles\n") < 0, "and it wrote a valid file");
+finish();

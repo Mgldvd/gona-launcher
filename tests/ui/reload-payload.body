@@ -1,0 +1,18 @@
+// {"reload":true} (the bar button's Reload): the launcher reads everything from disk again, and a broken file is refused
+const cfg = txt => Quickshell.execDetached(["sh", "-c", "printf '" + txt + "' > \"$HOME/.config/gona-launcher/config.toml\""]);
+cfg("[tiles]\\nicon_size = 72\\n"); wait(1600);
+eq(root.iconSize, 72, "the file says 72");
+root.configLoaded = false; root.setIcon(32); root.configLoaded = true; wait(100); // changed in memory only, as if the file were newer
+eq(root.iconSize, 32, "in memory it is 32");
+root.hide(); wait(500);
+root.open('{"reload":true}'); wait(500);
+eq(root.iconSize, 72, "Reload puts what is on disk in place of it");
+eq(root.toast, "Reloaded from disk", "and says so");
+ok(root.opened, "the launcher opens, so the message shows");
+root.hide(); wait(500);
+cfg("[tiles\\nicon_size = 40\\n"); wait(1600);
+root.configLoaded = false; root.setIcon(32); root.configLoaded = true; wait(100);
+root.open('{"reload":true}'); wait(500);
+eq(root.iconSize, 32, "a file that is not valid TOML is refused: the settings stay");
+ok(root.toast.indexOf("not valid TOML") >= 0, "and the message says why");
+finish();

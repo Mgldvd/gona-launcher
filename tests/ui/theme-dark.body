@@ -1,0 +1,10 @@
+// A dark Omarchy theme: Auto is Dark, and a forced Light look does not borrow its colours
+// omarchy: dark
+// config: [appearance]\nmode = "auto"
+eq([root.theme, root.lightMode, root.following], ["auto", false, true], "Auto on a dark theme is Dark with its colours");
+eq([root.palette[0], root.palette[6]], ["#7aa2f7", "#7aa2f7"], "the swatches come from the theme");
+root.setTheme("light"); wait(150);
+eq([root.lightMode, root.following, root.palette[1]], [true, false, "#d20f39"], "Light on a dark theme uses the launcher's own Light palette");
+root.setTheme("auto"); root.followTheme = false; wait(150);
+eq([root.following, root.palette[1]], [false, "#f38ba8"], "Follow off: the launcher's own Dark palette");
+finish();

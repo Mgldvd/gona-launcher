@@ -1,0 +1,45 @@
+// The ⚙ menu with the keyboard and the mouse: Tab, arrows, Space, typing a value, reset, Done, Esc
+// where: menu
+const sh = menu.shell;
+function focused() { return menu.Window.window.activeFocusItem; }
+function row(label) { return findAll(menu, c => c.label === label && c.visible && (c.pick !== undefined || c.toggled !== undefined))[0]; }
+keyClick(Qt.Key_Tab); wait(150);
+ok(focused() && focused().label === "Icon size", "Tab reaches the first control (Icon size)");
+keyClick(Qt.Key_Right); wait(150);
+eq(sh.iconSize, 52, "Right raises the slider by one step");
+keyClick(Qt.Key_Home); wait(150);
+eq(sh.iconSize, 24, "Home goes to the minimum");
+keyClick(Qt.Key_Tab); wait(150);
+ok(focused() && focused().label === "Show names", "Tab reaches the next control");
+const before = sh.showLabels;
+keyClick(Qt.Key_Space); wait(150);
+eq(sh.showLabels, !before, "Space flips a switch");
+// typing a value
+const val = findAll(row("Icon size"), c => c.typed !== undefined && c.visible)[0];
+click(val); keyClick(Qt.Key_6); keyClick(Qt.Key_0); keyClick(Qt.Key_Return); wait(200);
+eq(sh.iconSize, 60, "clicking the number and typing 60 sets it");
+ok(sh.optionsOpen, "Enter did not close the menu");
+click(val); keyClick(Qt.Key_9); keyClick(Qt.Key_Escape); wait(200);
+eq([sh.iconSize, sh.optionsOpen], [60, true], "Esc while typing cancels and keeps the menu open");
+// reset with the mouse
+const glyph = findAll(row("Icon size"), c => c.text === "↺" && c.visible)[0];
+click(glyph);
+eq(sh.iconSize, 48, "the ↺ of a slider puts its default back");
+sh.setTileGap(20); wait(100);
+const resetTab = findAll(menu, c => c.label === "Reset this tab")[0];
+click(resetTab);
+eq(sh.tileGap, 8, "Reset this tab puts the tab's settings back");
+// undo / redo buttons
+const undoBtn = findAll(menu, c => c.label !== undefined && String(c.label).indexOf("Undo tile change") === 0)[0];
+eq(undoBtn.active, false, "Undo is dimmed while there is nothing to undo");
+sh.split([], "h"); wait(150);
+ok(undoBtn.active && undoBtn.label === "Undo tile change (1)", "Undo lights up and counts the steps");
+click(undoBtn);
+eq([sh.undoSteps, sh.redoSteps], [0, 1], "clicking Undo takes the change back");
+// leaving
+keyClick(Qt.Key_Escape); wait(300);
+eq(sh.optionsOpen, false, "Esc closes the menu");
+sh.optionsOpen = true; wait(500);
+click(findAll(menu, c => c.label === "Done")[0]);
+eq(sh.optionsOpen, false, "Done closes the menu");
+finish();

@@ -1,0 +1,22 @@
+{
+  "type": "split",
+  "dir": "h",
+  "ratio": 0.5,
+  "a": {
+    "type": "leaf",
+    "ids": [
+      "localsend",
+      "obsidian"
+    ],
+    "centerH": true,
+    "centerV": true
+  },
+  "b": {
+    "type": "leaf",
+    "ids": [
+      "zen"
+    ],
+    "centerH": true,
+    "centerV": true
+  }
+}

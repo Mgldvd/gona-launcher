@@ -1,0 +1,36 @@
+// The profiles as buttons in the launcher's strip: labels, the limit of five, clicking, carrying the setting
+function buttons() { return findAll(t.Window.window.contentItem, x => x.label !== undefined && x.name !== undefined && x.title !== undefined && x.visible); }
+eq(root.profileButtons, [], "no buttons while there is only the default profile");
+root.showProfileButtons = true; wait(200);
+eq([root.profileButtons, root.stripOn], [[], false], "even with the switch on (one profile is nothing to pick)");
+ok(root.createProfile("alpha"), "a profile is saved"); wait(300);
+ok(root.switchProfile(""), "back to default"); wait(300);
+ok(root.createProfile("beta"), "a second"); wait(300);
+eq(root.profileButtons, ["", "alpha", "beta"], "the default comes first, then the saved ones by name");
+eq(root.stripOn, true, "and the strip is on");
+eq(buttons().map(b => b.label), ["1", "2", "3"], "the buttons are numbered");
+root.profileLabels = "letters"; wait(200);
+eq(buttons().map(b => b.label), ["A", "B", "C"], "or lettered");
+root.profileLabels = "roman"; wait(200);
+eq(buttons().map(b => b.label), ["I", "II", "III"], "or in Roman numerals");
+eq(buttons().map(b => b.title), ["default", "alpha", "beta"], "each has its profile's name for the hover");
+eq(buttons().filter(b => b.selected).map(b => b.title), ["beta"], "the profile in use is marked");
+// clicking
+const alpha = buttons().filter(b => b.title === "alpha")[0];
+click(alpha); wait(400);
+eq(root.activeProfile, "alpha", "clicking a button switches to that profile");
+ok(root.opened, "and the launcher stays open");
+eq([root.showProfileButtons, root.profileLabels], [true, "roman"], "the two settings are the same in every profile");
+// hover shows the name
+const now = buttons().filter(b => b.title === "alpha")[0];
+mouseMove(now, 5, 5); wait(300);
+const tips = findAll(now, x => x.text === "alpha" && x.visible);
+ok(tips.length > 0, "hovering a button shows the profile's name");
+// the limit
+ok(root.switchProfile("beta") && root.createProfile("gamma"), "a third saved profile"); wait(300);
+ok(root.createProfile("delta"), "and a fourth (five with the default)"); wait(300);
+ok(root.profilesFull, "then the list is full");
+ok(!root.createProfile("epsilon") && root.profileFailed && root.profileMessage.indexOf("Up to 5") === 0, "a sixth is refused, saying why");
+eq(buttons().length, 5, "five buttons at most");
+eq(root.profileNames.length, 4, "with four saved");
+finish();

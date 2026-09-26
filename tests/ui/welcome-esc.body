@@ -1,0 +1,11 @@
+// fixture: first-run
+// Esc on the first start's welcome screen starts with the recommended preset, never with nothing on screen;
+// hiding the launcher before choosing keeps the screen for the next open
+root.hide(); wait(600);
+root.open("{}"); wait(400);
+eq([root.welcomeOpen, root.welcomeFirstRun], [true, true], "still there after hiding and opening again");
+keyClick(Qt.Key_Escape); wait(900);
+eq([root.welcomeOpen, root.opened], [false, true], "Esc closes it and the launcher stays open");
+eq([root.edge, root.iconSize, root.profileNames], ["full", 40, []], "with the Omarchy preset (full screen), and no profiles saved");
+ok(root.readFile(root.configPath).indexOf('title = "Office"') >= 0, "written to config.toml");
+finish();

@@ -1,0 +1,14 @@
+// Every preset fits its window: no tile scrolls or cuts its icons off (a tile takes room only for its installed apps,
+// so the dividers and the panel's height follow what is there), and a tile of icons never overflows sideways
+const flicks = () => findAll(launcherWin.contentItem, c => c.contentHeight !== undefined && c.contentWidth !== undefined && c.clip === true && c.visible && c.height > 40);
+const scrolls = () => findAll(launcherWin.contentItem, c => c.contentHeight !== undefined && c.contentWidth !== undefined && c.clip === true && c.visible && c.height > 40)
+    .filter(f => f.contentHeight > f.height + 1);
+for (const name of ["omarchy", "top", "dock", "focus", "clean"]) {
+    root.hide(); wait(700);
+    root.configLoaded = false; ok(root.applyConfigText(root.presetText(name)).ok, name + " applies"); root.configLoaded = true;
+    wait(400);
+    root.open('{}'); wait(1200);
+    ok(flicks().length > 0, name + ": the tiles' scroll areas are found");
+    eq(scrolls().length, 0, name + ": no tile has icons cut off or scrolling");
+}
+finish();

@@ -1,0 +1,12 @@
+// After a menu closes, Esc in the launcher closes the launcher (the menu window gives the keyboard back)
+// edge: top
+root.optionsOpen = true; wait(500);
+root.optionsOpen = false; wait(500);
+keyClick(Qt.Key_Escape); wait(700);
+eq(root.opened, false, "Esc closes the launcher after the ⚙ menu was closed");
+root.open("{}"); wait(600);
+root.tileMenuPath = []; wait(500);
+root.closeTileMenu(); wait(500);
+keyClick(Qt.Key_Escape); wait(700);
+eq(root.opened, false, "Esc closes the launcher after a tile menu was closed");
+finish();

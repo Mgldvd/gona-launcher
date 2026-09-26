@@ -1,0 +1,16 @@
+// Esc and typing reach the launcher in every window mode (the hidden card's Loader once kept the keyboard)
+// edge: ""
+// edge: top
+// edge: bottom
+// edge: left
+// edge: right
+// edge: full
+const f = t.Window.window.activeFocusItem;
+ok(f !== null && f.visible, "the item that has the keyboard is a visible one");
+keyClick(Qt.Key_G); wait(200);
+eq(root.filterText, "g", "typing reaches the launcher");
+keyClick(Qt.Key_Escape); wait(200);
+eq([root.filterText, root.opened], ["", true], "the first Esc clears the filter and keeps the launcher");
+keyClick(Qt.Key_Escape); wait(700);
+eq(root.opened, false, "the second Esc closes the launcher");
+finish();

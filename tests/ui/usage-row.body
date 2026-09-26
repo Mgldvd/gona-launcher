@@ -1,0 +1,28 @@
+// The row of most used apps above the tiles
+const all = DesktopEntries.applications.values.filter(e => !e.noDisplay).map(e => e.id);
+const a = all[10], b = all[11], c = all[12], d = all[13];
+function rowCells() { return findAll(t.Window.window.contentItem, x => x.appId !== undefined && x.inResults === true && x.visible); }
+eq([root.usageRowH, rowCells().length], [0, 0], "off by default: no row, no room taken");
+root.showUsageRow = true; wait(200);
+eq(root.usageRowH, 0, "on but nothing launched yet: still no room taken");
+root.noteLaunch(a); root.noteLaunch(a); root.noteLaunch(a); root.noteLaunch(b); root.noteLaunch(b); root.noteLaunch(c); wait(300);
+eq(root.usageRowIds, [a, b, c], "the row is the apps by how often they were launched");
+ok(root.usageRowH > 0, "and takes room above the tiles");
+eq(rowCells().map(x => x.appId), [a, b, c], "one icon per app, in that order");
+const captions = () => findAll(t.Window.window.contentItem, x => (x.text === "Most used" || x.text === "Recently used") && x.visible).map(x => x.text);
+eq(captions(), ["Most used"], "the row is named, so a lone icon above the tiles does not look stray");
+root.usageRowCount = 3; root.noteLaunch(d); root.noteLaunch(d); root.noteLaunch(d); root.noteLaunch(d); wait(300);
+eq(root.usageRowIds, [d, a, b], "the row holds at most the chosen number of apps");
+root.usageOrder = "recent"; wait(300);
+eq(root.usageRowIds[0], d, "most recent first: the last one launched leads");
+eq(captions(), ["Recently used"], "and its caption follows the order");
+root.noteLaunch(c); wait(200);
+eq(root.usageRowIds[0], c, "and a new launch moves to the front");
+root.usageRowCount = 99; root.setTheme("dark"); root.loadSettings(); wait(100);
+eq(root.usageRowCount, 10, "the number is kept between 3 and 10");
+ok(root.minWinH >= root.usageRowH, "the launcher's minimum height allows for the row");
+root.trackUsage = false; root.noteLaunch(all[20]); wait(100);
+ok(root.usageRowIds.indexOf(all[20]) < 0, "nothing is added while counting is off");
+root.showUsageRow = false; wait(200);
+eq([root.usageRowH, rowCells().length], [0, 0], "switching it off takes the row away");
+finish();

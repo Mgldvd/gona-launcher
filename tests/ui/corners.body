@@ -1,0 +1,14 @@
+// Square corners by default, like Omarchy's windows: the tiles, the launcher's own surfaces and the menus. Corner
+// roundness still rounds the tiles, and the launcher's surfaces with them (up to 12); the menus stay square.
+const rounded = it => findAll(it, c => c.visible && c.radius !== undefined && c.radius > 0 && c.width > 6 && c.height > 6);
+eq([root.tileRadius, root.corner], [0, 0], "square by default");
+eq(rounded(card).length, 0, "nothing in the launcher is rounded");
+root.optionsOpen = true; wait(400);
+eq(floatingMenu.radius, 0, "the ⚙ menu is square");
+root.optionsOpen = false; wait(300);
+root.setTileRadius(20); wait(200);
+eq([root.tileRadius, root.corner], [20, 12], "rounding the tiles rounds the launcher's surfaces too, up to 12");
+ok(rounded(card).length > 0, "and they are drawn rounded");
+root.optionsOpen = true; wait(400);
+eq(floatingMenu.radius, 0, "the menu stays square");
+finish();

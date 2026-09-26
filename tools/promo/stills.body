@@ -1,0 +1,16 @@
+// The live screenshots of the README that the promo video does not have (the ⚙ menu): run by tools/promo/stills.py in
+// the promo stage, each shot a full-screen grim into $GONA_STILLS.
+// hypr: yes
+const screenName = Quickshell.env("GONA_SCREEN") || Quickshell.screens[0].name;
+const out = Quickshell.env("GONA_STILLS");
+const c = Qt.createComponent("PromoBackdrop.qml");
+const bd = c.createObject(root);
+root.hide(); wait(700);
+root.effect = "classic";
+function shot(name) { wait(900); Quickshell.execDetached(["grim", out + "/" + name + ".png"]); wait(700); }
+for (const tab of ["colors", "effects", "window", "keys", "buttons", "tiles"]) {
+    root.open('{"tab":"' + tab + '","anchor":{"x":' + bd.buttonX + ',"y":' + bd.buttonY + ',"screen":"' + screenName + '"}}');
+    shot("menu-" + tab);
+    root.optionsOpen = false; root.hide(); wait(600);
+}
+finish();

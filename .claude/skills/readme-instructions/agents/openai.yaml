@@ -1,0 +1,4 @@
+interface:
+  display_name: "GitHub Repository README"
+  short_description: "Write concise, command-first project READMEs"
+  default_prompt: "Use $readme-instructions to create or update this GitHub project README from verified repository commands and configuration, with minimal prose and restrained visual formatting."

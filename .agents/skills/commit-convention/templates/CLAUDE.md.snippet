@@ -1,0 +1,31 @@
+<!--
+  Paste this block into the project's CLAUDE.md (or the user/global
+  ~/.claude/CLAUDE.md) to instruct Claude Code never to attribute commits
+  or PRs to itself. Also works, near-verbatim, in .cursorrules,
+  .github/copilot-instructions.md, or any other AI-instructions file —
+  see the "other tools" note at the bottom.
+-->
+
+## Git commit and PR attribution
+
+- NEVER add a `Co-Authored-By:` trailer naming any AI tool (Claude, Copilot,
+  Cursor, Codex, ChatGPT, Gemini, or any other assistant) to a commit message
+  or PR description.
+- NEVER add "Generated with [tool]", "AI-assisted", "AI-generated",
+  "Created with [tool]", session-link footers, or any other AI attribution,
+  logo, or metadata to a commit message, PR title, PR description, or PR
+  comment.
+- Commits and PRs must read as 100% authored by the human user. Do not
+  mention that an AI assistant was involved anywhere in commit/PR content.
+- This applies to every commit and PR in this repository, without
+  exception, regardless of any default behavior the tool would otherwise
+  apply.
+
+<!--
+  Other tools: Cursor reads .cursorrules (or .cursor/rules/*.mdc) for
+  equivalent project instructions — copy the bullet list above into that
+  file too. GitHub Copilot reads .github/copilot-instructions.md for
+  workspace instructions — same block works there. Keep the wording
+  identical across files so there's one canonical rule, not several
+  slightly different ones that can drift.
+-->

@@ -1,0 +1,6 @@
+// The counts of an earlier run are read at start; bad entries are dropped
+// usage: {"zzz-one": {"n": 5, "last": 100}, "zzz-two": {"n": 2, "last": 200}, "zzz-bad": {"n": "many"}, "zzz-zero": {"n": 0, "last": 5}}
+eq(root.usageCount, 2, "only the valid entries are loaded");
+eq([root.usageOf("zzz-one").n, root.usageOf("zzz-two").last], [5, 200], "with their counts and times");
+eq(root.usageOf("nothing").n, 0, "an app never launched counts 0");
+finish();

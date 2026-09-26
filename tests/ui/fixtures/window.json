@@ -1,0 +1,65 @@
+{
+  "allAppsButton": true,
+  "borderWidth": 3,
+  "colors": {
+    "accent": {
+      "a": 100,
+      "v": 7
+    },
+    "appBg": {
+      "v": "none"
+    },
+    "bg": {
+      "a": 92,
+      "v": 6
+    },
+    "border": {
+      "a": 100,
+      "v": 6
+    }
+  },
+  "colorsLight": {
+    "bg": {
+      "a": 100,
+      "v": 3
+    }
+  },
+  "edge": "top",
+  "filterFontSize": 14,
+  "fullAnim": "meet",
+  "fullFrom": "left",
+  "gap": 72,
+  "height": 620,
+  "icon": 60,
+  "iconTheme": "line-square",
+  "keys": {},
+  "labels": false,
+  "menuScale": 80,
+  "offset": 52,
+  "panels": {
+    "top": [
+      60,
+      35
+    ],
+    "bottom": [
+      100,
+      40
+    ],
+    "left": [
+      40,
+      100
+    ],
+    "right": [
+      40,
+      100
+    ]
+  },
+  "powerButtonSize": 30,
+  "powerButtons": true,
+  "radius": 0,
+  "searchAll": true,
+  "searchLabels": true,
+  "speed": 350,
+  "theme": "dark",
+  "width": 900
+}

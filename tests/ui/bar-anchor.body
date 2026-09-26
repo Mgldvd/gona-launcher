@@ -1,0 +1,22 @@
+// A panel opened from the bar button is centred on it (when asked to), clamped to the screen
+// edge: top
+// the screen is read after each open(): it opens on the focused monitor, which is not always screens[0] with two
+const sw = () => root.targetScreen.width, sh = () => root.targetScreen.height;
+root.hide(); wait(600);
+root.open('{"anchor":{"x":300,"y":20,"screen":"' + root.targetScreen.name + '"}}'); wait(700);
+eq(dockedArea.x, Math.round((sw() - dockedArea.width) / 2), "off (the default): centred on the screen as before");
+root.nextToBar = true; wait(200);
+eq(dockedArea.x, Math.max(0, Math.min(sw() - dockedArea.width, 300 - dockedArea.width / 2)), "on: centred on the button along the top edge");
+root.hide(); wait(600);
+root.open('{"anchor":{"x":5,"y":20}}'); wait(700);
+eq(dockedArea.x, 0, "a button near the left end keeps the panel on the screen");
+root.hide(); wait(600);
+root.open('{"anchor":{"x":' + (sw() - 5) + ',"y":20}}'); wait(700);
+eq(dockedArea.x, sw() - dockedArea.width, "and near the right end too");
+root.hide(); wait(600);
+root.open("{}"); wait(700);
+eq(dockedArea.x, Math.round((sw() - dockedArea.width) / 2), "opened without the button (a key): centred on the screen");
+root.edge = "left"; root.hide(); wait(600);
+root.open('{"anchor":{"x":20,"y":400}}'); wait(700);
+eq(dockedArea.y, Math.max(0, Math.min(sh() - dockedArea.height, 400 - dockedArea.height / 2)), "on the left edge it is centred on the button's height");
+finish();

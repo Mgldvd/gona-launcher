@@ -1,0 +1,22 @@
+// Launch counts: what is counted, the three orders, the switch, clearing, and what is written
+root.allAppsOpen = true; wait(700);
+const base = root.searchResults.slice();
+ok(base.length > 6, "the all-apps list has apps (" + base.length + ")");
+const a = base[5], b = base[6], c = base[3];
+eq(root.usageOrder, "most_used", "the default order is most used first");
+root.noteLaunch(a); root.noteLaunch(a); root.noteLaunch(b); wait(150);
+eq([root.searchResults[0], root.searchResults[1]], [a, b], "the most launched come first");
+eq([root.usageOf(a).n, root.usageOf(b).n, root.usageOf(c).n], [2, 1, 0], "each launch is counted");
+root.usageOrder = "recent"; wait(150);
+eq([root.searchResults[0], root.searchResults[1]], [b, a], "most recent first: the last one launched leads");
+root.usageOrder = "name"; wait(150);
+eq(root.searchResults.slice(), base, "A to Z is the plain name order again");
+root.usageOrder = "most_used"; root.trackUsage = false; root.noteLaunch(c); wait(100);
+eq(root.usageOf(c).n, 0, "nothing is counted while the switch is off");
+root.trackUsage = true; usageSave.stop(); usageFile.setText(JSON.stringify(root.usageData)); wait(700);
+const saved = JSON.parse(root.readFile(root.usagePath));
+eq([saved[a].n, saved[b].n], [2, 1], "the counts are written to usage.json");
+ok(root.readFile(root.configPath).indexOf(a) < 0, "and are not part of config.toml");
+root.clearUsage(); wait(400);
+eq([root.usageCount, root.readFile(root.usagePath).trim()], [0, "{}"], "clearing empties the history and the file");
+finish();

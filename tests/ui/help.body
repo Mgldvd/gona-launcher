@@ -1,0 +1,31 @@
+// ? lists the keyboard shortcuts; Menu / Shift+F10 open the menu of the selected app's tile
+const all = DesktopEntries.applications.values.filter(e => !e.noDisplay).map(e => e.id);
+root.hide(); wait(600);
+root.commit({ type: "split", dir: "h", ratio: 0.5, a: { type: "leaf", ids: all.slice(0, 2) }, b: { type: "leaf", ids: all.slice(2, 4) } });
+root.open('{}'); wait(1000);
+const card = () => findAll(launcherWin.contentItem, c => c.text === "Keyboard shortcuts" && c.visible)[0];
+eq(root.helpOpen, false, "closed at first");
+keyClick(Qt.Key_Question, Qt.ShiftModifier); wait(300);
+eq(root.helpOpen, true, "? opens the list");
+ok(card() !== undefined, "and the card shows");
+ok(findAll(launcherWin.contentItem, c => c.text === "Ctrl + A" && c.visible).length === 1, "with the shortcut in use for a changeable action");
+keyClick(Qt.Key_X); wait(200);
+eq([root.helpOpen, root.filterText], [false, ""], "any key closes it and is not typed");
+keyClick(Qt.Key_F1); wait(300);
+eq(root.helpOpen, true, "F1 opens it too");
+keyClick(Qt.Key_Escape); wait(200);
+eq([root.helpOpen, root.opened], [false, true], "Esc closes it and the launcher stays");
+// a ? typed into a filter is a character
+keyClick(Qt.Key_D); wait(200); keyClick(Qt.Key_Question, Qt.ShiftModifier); wait(200);
+eq([root.helpOpen, root.filterText], [false, "d?"], "while filtering, ? is just a character");
+keyClick(Qt.Key_Escape); wait(200);
+// the tile menu from the keyboard
+root.selectedId = all[2]; wait(100);
+keyClick(Qt.Key_Menu); wait(300);
+eq(JSON.stringify(root.tileMenuPath), '["b"]', "the Menu key opens the menu of the selected app's tile");
+keyClick(Qt.Key_Escape); wait(200);
+eq(root.tileMenuPath, null, "Esc closes it");
+root.selectedId = all[0]; wait(100);
+keyClick(Qt.Key_F10, Qt.ShiftModifier); wait(300);
+eq(JSON.stringify(root.tileMenuPath), '["a"]', "Shift+F10 does the same");
+finish();

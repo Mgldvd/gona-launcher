@@ -1,0 +1,166 @@
+// The script of the promo video: plays the whole thing in a throw-away launcher while tools/promo/record.py records the
+// screen. Real key and mouse events on the real launcher; the stage (backdrop, words, pointer) is PromoBackdrop.qml and
+// PromoOverlay.qml. Timings are tuned for a 1366x768 screen.
+const screenName = Quickshell.env("GONA_SCREEN") || Quickshell.screens[0].name;
+function make(file) {
+    const c = Qt.createComponent(file);
+    if (c.status !== Component.Ready) console.log("PROMO-ERROR " + file + ": " + c.errorString());
+    return c.createObject(root);
+}
+const bd = make("PromoBackdrop.qml");
+const ov = make("PromoOverlay.qml");
+root.hide(); wait(700);
+
+function raise() { ov.visible = false; ov.visible = true; } // re-map the words above the launcher that just opened
+function cursorTo(x, y, ms) { ov.cursorMs = ms; ov.cx = x; ov.cy = y; wait(ms); }
+function say(text) { ov.caption = text; ov.captionOn = true; }
+function hush() { ov.captionOn = false; }
+let first = true;
+function clickBar() {
+    ov.cursorOn = true;
+    cursorTo(bd.buttonX + 4, bd.buttonY + 6, first ? 600 : 320);
+    first = false;
+    bd.pressed = true; ov.click(); wait(140); bd.pressed = false;
+}
+function openFromBar(effect) {
+    if (effect) root.effect = effect;
+    clickBar();
+    root.open('{"anchor":{"x":' + bd.buttonX + ',"y":' + bd.buttonY + ',"screen":"' + screenName + '"}}');
+    wait(70); raise();
+}
+function typeText(s) { for (const ch of s) { keyClick(ch); wait(170); } }
+function pt(item, fx, fy) { return item.mapToItem(null, item.width * fx, item.height * fy); }
+function dragToPoint(fromId, px, py) { // drag an app to a point of the screen with the real mouse events
+    const a = root.cellItems[fromId];
+    const ap = pt(a, 0.5, 0.5);
+    ov.cursorOn = true;
+    cursorTo(ap.x, ap.y, 650);
+    ov.cursorMs = 0;
+    mousePress(a, a.width / 2, a.height / 2); ov.click(); wait(140);
+    for (let i = 1; i <= 18; i++) {
+        const t = i / 18, e = t * t * (3 - 2 * t);
+        const x = ap.x + (px - ap.x) * e, y = ap.y + (py - ap.y) * e;
+        mouseMove(a, x - ap.x + a.width / 2, y - ap.y + a.height / 2);
+        ov.cx = x; ov.cy = y; wait(34);
+    }
+    mouseRelease(a, px - ap.x + a.width / 2, py - ap.y + a.height / 2); ov.click(); wait(450);
+}
+function dragApp(fromId, toId) { const b = root.cellItems[toId]; const p = pt(b, 0.7, 0.5); dragToPoint(fromId, p.x, p.y); }
+// the tiles on screen, left to right then top to bottom, each with its ⋯ button
+function tilesNow() {
+    return findAll(launcherWin.contentItem, c => c.text === "⋯").map(d => ({ dots: d, tile: d.parent }))
+        .sort((a, b) => { const pa = pt(a.tile, 0, 0), pb = pt(b.tile, 0, 0); return pa.x - pb.x || pa.y - pb.y; });
+}
+function hoverTile(tile) { const p = pt(tile, 0.5, 0.6); ov.cursorOn = true; cursorTo(p.x, p.y, 450); mouseMove(tile, tile.width * 0.5, tile.height * 0.6); wait(180); }
+function clickItem(it, ms) { const p = pt(it, 0.5, 0.5); cursorTo(p.x, p.y, ms || 420); mouseMove(it, it.width / 2, it.height / 2); wait(90); ov.click(); mouseClick(it, it.width / 2, it.height / 2); wait(300); }
+// right-click a tile, which opens its menu at once (its + and ⋯ buttons only show after the pointer has rested on it)
+function rightClickTile(tile) {
+    const p = pt(tile, 0.5, 0.6); ov.cursorOn = true; cursorTo(p.x, p.y, 450);
+    mouseMove(tile, tile.width * 0.5, tile.height * 0.6); wait(180);
+    ov.click(); mouseClick(tile, tile.width * 0.5, tile.height * 0.6, Qt.RightButton); wait(300);
+}
+function menuButton(label) { return findAll(tileMenu, c => c.label === label)[0]; }
+
+console.log("PROMO-START");
+root.effectMs = 600;
+
+// ---- 1. the title
+ov.title = "Gona Launcher"; ov.subtitle = "";
+wait(250); ov.titleOn = true; wait(2000); ov.titleOn = false; wait(500);
+
+// ---- 2. opening it from the bar, and typing to filter
+say("One click from the bar");
+openFromBar("fluid");
+wait(1300);
+say("Type to filter");
+typeText("d");
+wait(800);
+keyClick(Qt.Key_Escape); wait(400);
+
+// ---- 4. all apps, searched
+ov.cursorOn = false;
+say("Every installed app, one search away");
+keyClick(Qt.Key_A, Qt.ControlModifier); wait(1500);
+typeText("ob"); wait(700);
+keyClick(Qt.Key_Escape); wait(250); keyClick(Qt.Key_Escape); wait(700);
+root.hide(); hush(); wait(800);
+
+// ---- 5. the effects
+say("20 opening effects");
+wait(300);
+const showcase = [["fluid", "Fluid"], ["genie", "Genie"], ["matrix", "Matrix"], ["fireworks", "Fireworks"], ["blackhole", "Blackhole"]];
+for (const [name, label] of showcase) {
+    ov.tag = label; ov.tagOn = true;
+    openFromBar(name);
+    wait(root.effectMs + 350);
+    root.hide();
+    wait(root.effectMs + 50);
+}
+ov.tagOn = false; hush(); wait(300);
+
+// ---- 6. create tiles, organise them
+say("Create as many tiles as you like");
+ov.cursorOn = false;
+root.hide(); wait(500);
+root.commit({ type: "leaf", ids: ["zen", "code", "obsidian", "foot", "org.gnome.Nautilus", "mpv"], title: "My apps", titleAlign: "left", titleBold: true,
+              centerH: true, centerV: true, cBorder: { v: "#b794ff", a: 90 }, cBg: { v: "#b794ff", a: 16 } });
+openFromBar("bounce"); wait(root.effectMs + 400);
+let tl = tilesNow();
+say("Right-click a tile for its menu");
+rightClickTile(tl[0].tile); raise(); wait(700);
+clickItem(menuButton("Split →"), 420); wait(600);            // the tile becomes two
+say("Add apps");
+tl = tilesNow();
+hoverTile(tl[1].tile);
+clickItem(findAll(tl[1].tile, c => c.text === "+")[0], 420); wait(450); // the picker opens
+for (const [q, id] of [["dis", "Discord"], ["you", "YouTube"]]) {
+    typeText(q); wait(250);
+    clickItem(findAll(launcherWin.contentItem, c => c.selected !== undefined && c.modelData && c.modelData.id === id)[0], 400);
+    for (let i = 0; i < q.length; i++) keyClick(Qt.Key_Backspace);
+    wait(150);
+}
+clickItem(findAll(launcherWin.contentItem, c => c.text === "\u2190  Done")[0], 420); wait(450);
+say("Split again");
+tl = tilesNow();
+rightClickTile(tl[1].tile); raise(); wait(500);
+clickItem(menuButton("Split \u2193"), 420); wait(600);
+say("Drag apps from tile to tile");
+tl = tilesNow();
+const bottom = pt(tl[2].tile, 0.5, 0.55);
+dragToPoint("obsidian", bottom.x, bottom.y);
+wait(300);
+say("Name them. Colour them.");
+ov.cursorOn = false;
+for (const [path, title, hex] of [[["a"], "Work", "#b794ff"], [["b", "a"], "Social", "#ff6fae"], [["b", "b"], "Notes", "#35d6e8"]]) {
+    root.setTileTitle(path, title);
+    root.setTileTitleAlign(path, "left");
+    root.setTileTitleStyle(path, "titleBold", true);
+    root.setTileColor(path, "border", { v: hex, a: 90 });
+    root.setTileColor(path, "bg", { v: hex, a: 16 });
+    wait(380);
+}
+wait(700);
+root.hide(); hush(); wait(root.effectMs + 100);
+
+// ---- 7. dark and light
+say("Dark. Light. Yours.");
+openFromBar("fade");
+wait(1300);
+keyClick(Qt.Key_T, Qt.ControlModifier); wait(1200);
+keyClick(Qt.Key_T, Qt.ControlModifier); wait(900);
+
+// ---- 8. ready-made profiles and profiles
+say("Add a ready-made profile");
+ov.cursorOn = false;
+root.openWelcome(); wait(1400);
+for (let i = 0; i < 4; i++) { keyClick(Qt.Key_Right); wait(1100); }
+keyClick(Qt.Key_Escape); wait(700);
+say("Profiles, one key each");
+keyClick(Qt.Key_P, Qt.ControlModifier); wait(1150);
+keyClick(Qt.Key_P, Qt.ControlModifier); wait(1150);
+root.hide(); hush(); wait(900);
+
+// ---- 9. the end
+ov.outroOn = true; wait(2800);
+console.log("PROMO-END");
+finish();

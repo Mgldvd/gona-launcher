@@ -1,0 +1,56 @@
+# Gona Launcher preset: Dock.
+# A dock along the bottom of the screen, like macOS's: one row of your apps in three groups (web, apps,
+# dev and system), each its own colour, large icons without names close to the border, square corners. Each group lists at most five
+# apps so the row never wraps; only the installed ones show.
+version = 1
+
+[window]
+mode = "bottom"
+effect = "genie"
+effect_ms = 550
+
+[window.panels]
+bottom = [60, 10, 10]
+
+[tiles]
+icon_size = 44
+show_names = false
+gap = 6
+padding = 4
+
+[search]
+all_apps = true
+
+[layout]
+type = "split"
+dir = "h"
+ratio = 0.3333
+
+[layout.a]
+type = "leaf"
+centerH = true
+centerV = true
+cBorder = { v = 6 }
+cBg = { v = 6, a = 40 }
+ids = ["chromium", "zen", "firefox", "WhatsApp", "YouTube"]
+
+[layout.b]
+type = "split"
+dir = "h"
+ratio = 0.5
+
+[layout.b.a]
+type = "leaf"
+centerH = true
+centerV = true
+cBorder = { v = 3 }
+cBg = { v = 3, a = 40 }
+ids = ["org.gnome.Nautilus", "obsidian", "libreoffice-writer", "mpv", "localsend"]
+
+[layout.b.b]
+type = "leaf"
+centerH = true
+centerV = true
+cBorder = { v = 7 }
+cBg = { v = 7, a = 40 }
+ids = ["foot", "com.mitchellh.ghostty", "nvim", "btop", "Docker"]

@@ -1,0 +1,15 @@
+// Reduce motion: the launcher opens and closes at once, whatever the effect, and the effect settings are kept
+root.effect = "fluid"; root.setEffectMs(800); wait(200);
+eq([root.animMs, root.wantedMs], [800, 800], "an effect has its own length");
+root.reduceMotion = true; wait(200);
+eq([root.animMs, root.wantedMs, root.effectMs, root.effect], [0, 800, 800, "fluid"], "reduced: no animation, and the effect and its length are kept");
+root.hide(); wait(1500);
+eq(root.slide, 0, "hidden");
+root.open("{}"); wait(150);
+eq(root.slide, 1, "it opens at once (an 800 ms effect would not be there yet)");
+eq(fx.effect, "", "with no effect running");
+root.hide(); wait(150);
+eq(root.slide, 0, "and closes at once");
+root.reduceMotion = false; wait(100);
+eq(root.animMs, 800, "turned off again: the effect is back");
+finish();

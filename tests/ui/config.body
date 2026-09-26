@@ -1,0 +1,18 @@
+// config.toml: written after a change, exported, imported back, and a bad file is refused
+const dir = Quickshell.env("HOME") + "/out";
+root.setIcon(64); root.saveNow(); wait(700);
+ok(root.readFile(root.configPath).indexOf("icon_size = 64") >= 0, "a change is written to config.toml");
+root.exportConfig("~/out/exported.toml"); wait(1500);
+eq(root.transferFailed, false, "export reports success");
+eq(root.readFile(dir + "/exported.toml"), root.configText(), "the exported file is the current configuration");
+root.setIcon(40); wait(100);
+root.importConfig("~/out/exported.toml"); wait(500);
+eq([root.iconSize, root.transferFailed], [64, false], "importing brings the exported value back");
+ok(root.readFile(root.configPath + ".bak").indexOf("icon_size = 40") >= 0, "the settings before the import are kept in config.toml.bak");
+Quickshell.execDetached(["sh", "-c", "printf 'a = \\n' > \"$HOME/out/bad.toml\""]); wait(500);
+root.importConfig("~/out/bad.toml"); wait(300);
+ok(root.transferFailed && root.transferMessage.indexOf("line 1") >= 0, "a file that is not TOML is refused with its line");
+eq(root.iconSize, 64, "and nothing changed");
+root.importConfig("~/out/missing.toml"); wait(300);
+ok(root.transferFailed, "a missing file is reported");
+finish();

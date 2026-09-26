@@ -1,0 +1,32 @@
+// Renaming and cycling profiles, from the payload and from the key
+root.setIcon(40); root.saveNow(); wait(600);
+ok(root.createProfile("one"), "first profile"); wait(300);
+root.setIcon(56); root.saveNow(); wait(600);
+ok(root.switchProfile(""), "back to default"); wait(300);
+ok(root.createProfile("two"), "second profile"); wait(600);
+ok(root.switchProfile(""), "default again"); wait(300);
+eq(root.profileNames, ["one", "two"], "two profiles are listed");
+keyClick(Qt.Key_P, Qt.ControlModifier); wait(500);
+eq(root.activeProfile, "one", "Ctrl+P goes to the next profile");
+eq(root.iconSize, 56, "with its own settings");
+eq(root.toast, "Profile: one", "and says so over the launcher");
+root.hide(); wait(500);
+root.open('{"profile":"next"}'); wait(600);
+eq(root.activeProfile, "two", "{profile: next} moves on");
+root.hide(); wait(500);
+root.open('{"profile":"next"}'); wait(600);
+eq(root.activeProfile, "", "and wraps round to the default");
+root.hide(); wait(500);
+root.open('{"profile":"previous"}'); wait(600);
+eq(root.activeProfile, "two", "{profile: previous} goes back, wrapping the other way");
+// rename
+ok(root.renameProfile("two", "three"), "the profile in use is renamed");
+wait(600);
+eq([root.activeProfile, root.profileNames, root.readFile(root.stateDir + "/profile").trim()], ["three", ["one", "three"], "three"], "it stays in use under the new name, remembered");
+eq(root.readFile(root.profilePath("two")), "", "the old file is gone");
+ok(root.readFile(root.profilePath("three")).indexOf("[tiles]") >= 0, "and the new one has the content");
+ok(!root.renameProfile("three", "one") && root.profileFailed, "a name in use is refused");
+ok(!root.renameProfile("three", "next") && !root.renameProfile("three", "a b"), "reserved and bad names are refused");
+ok(!root.renameProfile("nothing", "x"), "a profile that does not exist cannot be renamed");
+ok(!root.createProfile("previous"), "\"previous\" is not a name");
+finish();

@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: How to use it
+    url: https://github.com/Mgldvd/gona-launcher/blob/dev/docs/usage.md
+    about: The keys, the menus and the settings are described here.

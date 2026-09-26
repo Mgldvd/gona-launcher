@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "gona.launcher",
+  "name": "Gona Launcher",
+  "version": "1.0.0",
+  "author": "mglq",
+  "license": "MIT OR Apache-2.0",
+  "description": "Highly configurable app launcher: tiles you split, colour and arrange yourself, one tap of Super away",
+  "kinds": [
+    "overlay",
+    "bar-widget"
+  ],
+  "keepLoaded": true,
+  "entryPoints": {
+    "overlay": "app/Overlay.qml",
+    "barWidget": "app/BarWidget.qml"
+  },
+  "barWidget": {
+    "displayName": "Gona Launcher",
+    "description": "Opens Gona Launcher",
+    "category": "Launchers",
+    "allowMultiple": false
+  }
+}

@@ -1,0 +1,47 @@
+// every opening effect: the shader compiles, it plays (the launcher is drawn through it while sliding, live again at the end),
+// closing unmaps the window, and Classic still works
+// edge:
+// edge: top
+// edge: bottom
+// edge: left
+// edge: right
+// edge: full
+const se = findAll(fx, c => c.fragmentShader !== undefined)[0];
+ok(se !== undefined, "the effect layer has its shader item");
+eq(root.effect, "classic", "starts on Classic");
+root.effectMs = 400;
+for (const name of ["fade", "slide", "meet", "corners", "blocks", "fluid", "bounce", "genie", "dissolve", "glitch", "matrix", "decrypt", "synthgrid", "spotlights", "laser", "blackhole", "fireworks", "rain", "beams", "vhs"]) {
+    root.hide(); wait(700);
+    root.effect = name;
+    root.open("{}");
+    for (let i = 0; i < 24 && !(root.slide > 0); i++) wait(25); // the window may take a moment to map before the slide starts
+    wait(40);
+    ok(root.slide > 0 && root.slide < 1, name + ": sliding (slide " + root.slide.toFixed(2) + ")");
+    ok(fx.active, name + ": the layer is drawing");
+    eq(se.status === ShaderEffect.Compiled, true, name + ": the shader is compiled" + (se.status !== ShaderEffect.Compiled ? " -- " + se.log : ""));
+    wait(700);
+    eq(root.slide, 1, name + ": fully open");
+    ok(!fx.active, name + ": at rest the live launcher shows, not the picture");
+    root.hide(); wait(150);
+    ok(launcherWin.visible, name + ": still mapped while it closes");
+    wait(700);
+    ok(!launcherWin.visible, name + ": unmapped once closed");
+}
+// Classic: no layer, the old behaviour
+root.effect = "classic";
+root.open("{}"); wait(700);
+ok(!fx.active && root.slide === 1, "Classic: no shader layer");
+// "Animate closing" off: opening still plays, closing is instant
+root.hide(); wait(700);
+root.effect = "bounce"; root.effectMs = 400; root.closeAnim = false;
+root.open("{}"); wait(120);
+ok(root.slide > 0 && root.slide < 1, "closing off: the opening still animates (slide " + root.slide + ", opened " + root.opened + ", ms " + root.animMs + ", effect " + root.effect + ")");
+wait(600); root.hide(); wait(80);
+ok(!launcherWin.visible, "closing off: unmapped at once");
+root.closeAnim = true;
+// a length of 0 is instant, whatever the effect
+root.hide(); wait(700);
+root.effect = "fluid"; root.effectMs = 0;
+root.open("{}"); wait(60);
+eq([root.slide, fx.active], [1, false], "0 ms: open at once, no effect");
+finish();

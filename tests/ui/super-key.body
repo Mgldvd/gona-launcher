@@ -1,0 +1,24 @@
+// Super alone: added to bindings.lua the first time, changed and removed from ⚙ > Keys, and "Off" sticks
+// hypr: yes
+const f = Quickshell.env("HOME") + "/.config/hypr/bindings.lua";
+const mine = '-- mine\no.bind("SUPER + E", "Files", "nautilus")\n';
+eq([root.superAvailable, root.superMode], [true, "tiles"], "the first load adds Super alone, opening the tiles");
+wait(500);
+let text = root.readFile(f);
+ok(text.startsWith(mine), "the person's own lines are kept");
+ok(text.indexOf('o.bind("SUPER + SUPER_L", "Gona Launcher", "omarchy-shell shell toggle gona.launcher", { release = true })') > 0, "the binding is in the file");
+eq(root.readFile(root.stateDir + "/super-key").trim(), "tiles", "the first-time setup is remembered");
+root.setSuperMode("allApps"); wait(500);
+text = root.readFile(f);
+eq([root.superMode, text.split(">>> gona-launcher:super").length], ["allApps", 2], "All apps replaces the block, it is not added twice");
+ok(text.indexOf("'{\\\"allApps\\\":true}'") > 0, "the binding opens all apps");
+root.setSuperMode("off"); wait(500);
+eq(root.readFile(f), mine, "Off gives the file back as it was");
+root.refreshSuperKey(); wait(300);
+eq([root.superMode, root.readFile(f)], ["off", mine], "Off sticks: the next open does not add it again");
+// a Super-alone binding written by hand: two toggles per release would open and close it at once, so the block replaces it
+root.writeFile(f, mine + '-- tap Super\no.bind("SUPER + SUPER_L", "Gona Launcher", "omarchy-shell shell toggle gona.launcher", { release = true })\n'); wait(300);
+root.setSuperMode("tiles"); wait(500);
+text = root.readFile(f);
+eq([text.split("SUPER_L").length, text.split(">>> gona-launcher:super").length], [2, 2], "the hand-written binding is not left beside the block");
+finish();

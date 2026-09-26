@@ -1,0 +1,19 @@
+name: verify
+# The checks that need no Wayland session: the manifest is valid JSON and the pure-JS logic (app/lib) passes its tests.
+# The UI tests (tests/ui.sh) need a real Omarchy desktop and are run by hand.
+on:
+  push:
+    branches: [dev]
+  pull_request:
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: manifest.json is valid JSON
+        run: node -e "JSON.parse(require('fs').readFileSync('manifest.json', 'utf8')); console.log('ok')"
+      - name: tests/verify.sh (skips what needs omarchy or qsb)
+        run: tests/verify.sh

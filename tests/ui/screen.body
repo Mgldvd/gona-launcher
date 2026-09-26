@@ -1,0 +1,7 @@
+// The launcher opens on the monitor Hyprland has focused (one monitor here, so it must be that one)
+root.hide(); wait(600);
+root.open("{}"); wait(600);
+ok(Hyprland.focusedMonitor !== null, "Hyprland reports a focused monitor");
+eq(root.targetScreen.name, Hyprland.focusedMonitor.name, "the launcher is on the focused monitor");
+eq(root.focusedScreen().name, root.targetScreen.name, "focusedScreen() agrees");
+finish();

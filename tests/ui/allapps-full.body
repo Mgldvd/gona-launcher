@@ -1,0 +1,20 @@
+// config: [window]\nmode = "bottom"\n[window.panels]\nbottom = [48, 8, 10]
+// "All apps" (Ctrl+A) takes the whole screen whatever the mode: in a dock there was no room to see anything. The dock
+// grows to the screen (and shrinks back) instead of jumping, while the tiles fade out and the list fades in; the
+// saved mode does not change.
+const small = dockedArea.height, full = root.targetScreen.height;
+eq([root.edge, root.grow], ["bottom", 0], "a dock");
+keyClick(Qt.Key_A, Qt.ControlModifier); wait(180);
+ok(dockedArea.height > small + 20 && dockedArea.height < full - 20, "halfway it is between the dock and the screen (" + Math.round(dockedArea.height) + " px)");
+wait(700);
+eq([root.allAppsOpen, root.edge, root.grow], [true, "bottom", 1], "Ctrl+A: the list, full screen; the setting is still bottom");
+ok(dockedArea.height === full && dockedArea.width === root.targetScreen.width, "the panel covers the screen (" + dockedArea.width + "x" + dockedArea.height + ")");
+const tiles = findAll(dockedArea, c => c.path !== undefined && c.spec !== undefined)[0];
+ok(tiles && tiles.opacity === 0, "the tiles have faded out");
+keyClick(Qt.Key_A, Qt.ControlModifier); wait(180);
+ok(dockedArea.height < full - 20 && dockedArea.height > small + 20, "going back, it shrinks through the sizes in between");
+wait(700);
+eq([root.allAppsOpen, root.grow, dockedArea.height], [false, 0, small], "and is the dock again, same size");
+ok(tiles.opacity === 1, "with its tiles");
+ok(root.readFile(root.configPath).indexOf('mode = "full"') < 0, "full screen is never written to config.toml");
+finish();

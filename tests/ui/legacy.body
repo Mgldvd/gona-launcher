@@ -1,0 +1,9 @@
+// First run after the change from window.json + layout.json: they are converted into config.toml
+// fixture: legacy
+eq([root.edge, root.panelW, root.panelH], ["top", 60, 35], "the old window mode and panel size are read");
+eq(root.layout.a.ids, ["localsend", "obsidian"], "the old tiles are read");
+root.open("{}"); wait(500);
+const text = root.readFile(root.configPath);
+ok(text.indexOf("[layout]") >= 0 && text.indexOf("top = [60, 35]") >= 0, "config.toml was written from them");
+eq([root.powerOffButton, root.restartButton, root.logoutButton], [true, true, true], "the old single power-buttons switch became the three");
+finish();

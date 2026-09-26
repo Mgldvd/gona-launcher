@@ -1,0 +1,21 @@
+<!--
+  Paste into .github/copilot-instructions.md so Copilot Chat / Copilot
+  Workspace picks it up as a workspace instruction.
+-->
+
+## Git commit and PR attribution
+
+- Never add a `Co-Authored-By:` trailer naming Copilot or any other AI
+  assistant to a commit message or PR description.
+- Never add "Generated with Copilot", "AI-assisted", "AI-generated", or any
+  other AI attribution, logo, or metadata to a commit message, PR title, PR
+  description, or PR comment.
+- Commits and PRs must read as 100% authored by the human user.
+
+<!--
+  Copilot's commit-message generation (the sparkle icon in the Source
+  Control view) does not currently add co-author trailers by default, so
+  the main risk is Copilot Chat/agent modes drafting a commit message that
+  includes one when asked to write one "as if from an AI pair programmer".
+  This instruction file plus the commit-msg hook cover both cases.
+-->

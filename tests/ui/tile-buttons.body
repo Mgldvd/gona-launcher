@@ -1,0 +1,42 @@
+// The ＋ and ⋯ buttons of a tile do not cover its icons while you aim at one: they show once the pointer has rested on
+// the tile (or never, with "Right-click only"), and right-clicking a tile opens its menu whatever the setting
+const all = DesktopEntries.applications.values.filter(e => !e.noDisplay).map(e => e.id);
+root.hide(); wait(600);
+root.commit({ type: "leaf", ids: all.slice(0, 4), centerH: true, centerV: true });
+root.open('{}'); wait(1000);
+const dots = () => findAll(launcherWin.contentItem, c => c.text === "⋯")[0];
+const plus = () => findAll(launcherWin.contentItem, c => c.text === "+")[0];
+const tile = () => dots().parent;
+eq(root.tileButtons, "pause", "the default: buttons after a pause");
+mouseMove(tile(), -20, -20); wait(300); // wherever the real pointer was, it is now off the tile
+ok(!dots().visible && !plus().visible, "not shown until the pointer is over the tile");
+mouseMove(tile(), tile().width / 2, tile().height / 2); wait(1500);
+ok(!dots().visible && !plus().visible, "the pointer just arrived: still hidden, so nothing covers the icons");
+wait(root.tileButtonsDelay);
+ok(dots().visible && plus().visible, "after resting on the tile they show");
+mouseMove(tile(), -20, -20); wait(300);
+ok(!dots().visible, "and go when the pointer leaves");
+mouseMove(tile(), tile().width / 2, tile().height / 2); wait(300);
+mouseMove(tile(), -20, -20); wait(200);
+mouseMove(tile(), tile().width / 2, tile().height / 2); wait(400);
+ok(!dots().visible, "coming back starts the wait again");
+mouseMove(tile(), -20, -20); wait(200);
+// right-click opens the tile menu at once
+mouseClick(tile(), tile().width / 2, tile().height / 2, Qt.RightButton); wait(300);
+ok(root.tileMenuPath !== null, "right-clicking the tile opens its menu");
+mouseClick(tile(), tile().width / 2, tile().height / 2, Qt.RightButton); wait(300);
+eq(root.tileMenuPath, null, "and right-clicking again closes it");
+// "Right-click only": never on hover
+root.tileButtons = "click"; wait(200);
+mouseMove(tile(), tile().width / 2, tile().height / 2); wait(root.tileButtonsDelay + 500);
+ok(!dots().visible && !plus().visible, "Right-click only: the buttons never show on hover");
+mouseClick(tile(), tile().width / 2, tile().height / 2, Qt.RightButton); wait(300);
+ok(root.tileMenuPath !== null, "but the right-click still opens the menu");
+root.closeTileMenu(); wait(200);
+mouseMove(tile(), -20, -20); wait(200);
+// an empty tile has no icons to cover: its ＋ shows at once
+root.tileButtons = "pause";
+root.commit({ type: "leaf", ids: [] }); wait(500);
+mouseMove(tile(), tile().width / 2, tile().height / 2); wait(300);
+ok(plus().visible, "an empty tile shows its ＋ straight away");
+finish();

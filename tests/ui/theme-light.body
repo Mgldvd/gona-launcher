@@ -1,0 +1,20 @@
+// Dark / Light / Auto and the colours of the active Omarchy theme (a light one here)
+// omarchy: light
+eq([root.omarchyOk, root.omarchyMode], [true, "light"], "the Omarchy theme is read");
+eq([root.lightMode, root.following], [false, false], "Dark mode ignores a light theme's colours");
+eq(root.palette[1], "#f38ba8", "and keeps its own fixed Dark palette");
+root.setTheme("auto"); wait(150);
+eq([root.lightMode, root.following], [true, true], "Auto follows Omarchy's light mode and its colours");
+eq([root.palette[0], root.palette[1], root.palette[7]], ["#3e6ee0", "#c0392b", "#8e44ad"], "the swatches are the theme's accent, red and magenta");
+eq(root.paletteNames[0], "Accent", "and are named after them");
+eq([root.systemHex("appBg"), root.systemHex("menuBg")], ["#f2ede4", "#faf6ee"], "System backgrounds are the theme's");
+eq(root.accent.toString(), "#3e6ee0", "the launcher's accent is the theme's accent");
+ok(root.appLight && root.fg.toString() === "#1e1e2e", "dark text on the theme's light background");
+root.followTheme = false; wait(150);
+eq([root.lightMode, root.following, root.palette[1], root.systemHex("appBg")], [true, false, "#d20f39", "#eff1f5"], "with 'Follow the Omarchy theme' off the launcher's own Light look is used");
+root.followTheme = true; root.setTheme("light"); wait(150);
+eq([root.lightMode, root.following], [true, true], "Light on a light theme follows its colours too");
+root.saveNow(); wait(600);
+const text = root.readFile(root.configPath);
+ok(text.indexOf('mode = "light"') >= 0 && text.indexOf("follow_omarchy = true") >= 0, "the mode and the setting are written to config.toml");
+finish();

@@ -1,0 +1,9 @@
+// config: [layout]\ntype = "split"\ndir = "h"\nratio = 0.5\n[layout.a]\ntype = "leaf"\nids = ["no.such.app", "nor.this.one"]\n[layout.b]\ntype = "leaf"\nids = []
+// A tile whose apps are all uninstalled (a preset's, after removing them) says so instead of looking broken
+const hint = t => findAll(card, c => c.text === t && c.visible);
+eq(root.welcomeOpen, false, "an existing config.toml: no welcome screen");
+eq(hint("None of these apps is installed. Press ＋ to add some").length, 1, "the tile with uninstalled apps explains itself");
+eq(hint("Drag apps here or press ＋").length, 1, "the empty tile keeps its own hint");
+root.filterText = "zz"; wait(200);
+eq(hint("None of these apps is installed. Press ＋ to add some").length, 0, "not while typing");
+finish();

@@ -1,0 +1,56 @@
+// fixture: first-run
+// The first start: the welcome screen instead of the tiles, chosen by keyboard, the others saved as profiles;
+// later from ⚙ > Profiles > "Browse ready-made profiles": Esc cancels, one is added as a new profile (never replacing any)
+const conf = () => root.readFile(root.configPath);
+eq([root.welcomeOpen, root.welcomeFirstRun], [true, true], "with no config.toml the welcome screen shows");
+eq(root.presetInfo.map(p => p.name), ["omarchy", "top", "dock", "focus", "clean"], "it offers the five presets, Omarchy first");
+ok(root.presetInfo.every(p => p.layout && p.settings), "every preset file is read");
+eq(card.visible, false, "the tiles are hidden behind it");
+eq(conf(), "", "nothing is written before a preset is chosen");
+keyClick(Qt.Key_Right); wait(80);
+eq(root.welcomeIndex, 1, "→ chooses the next card");
+keyClick(Qt.Key_5); wait(80);
+eq(root.welcomeIndex, 4, "5 chooses the fifth");
+keyClick(Qt.Key_Tab); wait(80);
+eq(root.welcomeIndex, 0, "Tab wraps round to the first");
+root.welcomeSaveOthers = true; wait(200);
+const marks = findAll(welcome, c => c.visible && (c.text === "✓ Profile" || c.text === "✓ In use")).map(c => c.text);
+eq(marks.sort(), ["✓ In use", "✓ Profile", "✓ Profile", "✓ Profile", "✓ Profile"], "with it on, every card is marked: the one started with, the others as profiles");
+keyClick(Qt.Key_Return); wait(900);
+eq([root.welcomeOpen, root.welcomeFirstRun], [false, false], "Enter starts with it and the screen goes");
+ok(conf().indexOf('title = "Web"') >= 0 && conf().indexOf('title = "Media & Play"') >= 0, "config.toml now holds the Omarchy tiles");
+eq([root.edge, root.iconSize, root.searchAll, root.showUsageRow, dockedArea.visible], ["full", 40, true, true, true], "with its settings (full screen), and the tiles show");
+let leaves = 0; root.walkLeaves(root.layout, () => leaves++);
+eq(leaves, 7, "seven groups");
+eq(root.profileNames, ["top", "dock", "focus", "clean"], "the other presets were saved as profiles (all four fit: five at most), in the order they were made: Clean, the empty one, last");
+eq(root.readFile(root.stateDir + "/profile-order").split("\n"), ["top", "dock", "focus", "clean"], "and that order is remembered");
+ok(root.readFile(root.profilePath("dock")).indexOf('mode = "bottom"') >= 0, "each from its preset file");
+eq(root.readFile(root.configPath + ".bak"), "", "no backup on the first start (there was nothing)");
+// later, from the ⚙ menu: Esc cancels
+root.openWelcome(); wait(200);
+eq([root.welcomeOpen, root.welcomeFirstRun, dockedArea.visible], [true, false, false], "⚙ > Profiles > Add a ready-made profile opens it again");
+keyClick(Qt.Key_Escape); wait(200);
+eq([root.welcomeOpen, root.iconSize], [false, 40], "Esc cancels and changes nothing");
+// five profiles are the most: nothing is added and the screen stays
+root.openWelcome(); wait(200);
+keyClick(Qt.Key_3); keyClick(Qt.Key_Return); wait(400);
+eq([root.welcomeOpen, root.profileNames.length, root.activeProfile], [true, 4, ""], "with the profiles full, Enter adds nothing and the screen stays");
+keyClick(Qt.Key_Escape); wait(200);
+// with room, a ready-made profile is ADDED next to the others and switched to: nothing is replaced
+root.deleteProfile("focus"); wait(300);
+const defaultText = root.readFile(root.profilePath(""));
+root.openWelcome(); wait(200);
+keyClick(Qt.Key_3); keyClick(Qt.Key_Return); wait(900);
+eq([root.welcomeOpen, root.activeProfile], [false, "dock-2"], "Dock is added as a profile of its own (\"dock\" is taken, so it gets a number) and switched to");
+eq(root.profileNames, ["top", "dock", "clean", "dock-2"], "at the end of the list");
+eq([root.edge, root.iconSize, root.showLabels], ["bottom", 44, false], "with the Dock settings");
+eq(root.readFile(root.profilePath("")), defaultText, "the default profile is exactly as it was");
+root.openWelcome(); wait(200);
+root.deleteProfile("clean"); wait(300);
+keyClick(Qt.Key_3); keyClick(Qt.Key_Return); wait(900);
+eq([root.activeProfile, root.profileNames], ["dock-3", ["top", "dock", "dock-2", "dock-3"]], "and the next one is numbered again");
+// closing the launcher closes a welcome screen opened from the menu
+root.openWelcome(); wait(200);
+root.hide(); wait(600);
+eq(root.welcomeOpen, false, "hiding the launcher closes it");
+finish();

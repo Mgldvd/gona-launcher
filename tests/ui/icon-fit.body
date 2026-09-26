@@ -1,0 +1,28 @@
+// edge: bottom
+// Icons shrink to fit their tile, so none is cut off by the tile's edge: many apps in a small tile, then fewer, then a
+// bigger window
+const all = DesktopEntries.applications.values.filter(e => !e.noDisplay).map(e => e.id);
+ok(all.length >= 12, "the test needs a dozen installed apps (" + all.length + ")");
+const leaves = () => findAll(launcherWin.contentItem, c => c.wantedSize !== undefined && c.visible);
+const flicks = () => findAll(launcherWin.contentItem, c => c.contentHeight !== undefined && c.contentWidth !== undefined && c.clip === true && c.visible && c.height > 40);
+const scrolls = () => flicks().filter(f => f.contentHeight > f.height + 1).length;
+root.hide(); wait(600);
+root.commit({ type: "split", dir: "h", ratio: 0.5,
+              a: { type: "leaf", ids: all.slice(0, 12), icon: 128, centerH: true, centerV: true },
+              b: { type: "leaf", ids: all.slice(0, 12), icon: 128, centerH: true, centerV: true } });
+root.open('{}'); wait(1200);
+let l = leaves();
+eq(l.length, 2, "two tiles");
+ok(l.every(t => t.wantedSize === 128), "both were given 128 px icons");
+ok(l[0].size < 128 && l[0].size >= root.minIcon, "twelve 128 px icons do not fit the panel's height, so they shrank (" + l[0].size + " px)");
+eq(scrolls(), 0, "and none is cut off or scrolls");
+const crowded = l[0].size;
+// fewer apps in both: the icons grow back
+root.commit({ type: "split", dir: "h", ratio: 0.5,
+              a: { type: "leaf", ids: all.slice(0, 2), icon: 128, centerH: true, centerV: true },
+              b: { type: "leaf", ids: all.slice(0, 2), icon: 128, centerH: true, centerV: true } });
+wait(600);
+l = leaves();
+ok(l[0].size > crowded, "with two apps the icons are bigger again (" + l[0].size + " > " + crowded + ")");
+eq(scrolls(), 0, "still nothing cut off");
+finish();

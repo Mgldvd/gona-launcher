@@ -1,0 +1,4 @@
+interface:
+  display_name: "commit-convention"
+  short_description: "Generate, commit, or push staged changes to convention"
+  default_prompt: "Use $commit-convention to generate a commit message from staged changes using Conventional Commits 1.0.0 plus optional .memory Memory-Ref/Decision-Ref trailers, create a local commit when requested, and push only when I explicitly request it. Never add AI/agent attribution of any kind."

@@ -1,0 +1,8 @@
+// A profile that was in use is in use again after a restart
+// profile: work
+eq(root.activeProfile, "work", "the profile named in the state file is used");
+eq(root.iconSize, 72, "with the settings of its file");
+eq(root.profileNames, ["work"], "and it is listed");
+root.setIcon(80); root.saveNow(); wait(900);
+ok(root.readFile(root.profilePath("work")).indexOf("icon_size = 80") >= 0, "changes are written to its file");
+finish();

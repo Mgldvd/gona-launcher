@@ -1,0 +1,5 @@
+// A config.toml that is not valid TOML: the defaults are used and the file is kept as config.toml.broken
+// fixture: broken
+eq(root.edge, "", "the launcher starts with the defaults");
+ok(root.readFile(root.configPath + ".broken").indexOf("[window") >= 0, "the broken file was copied to config.toml.broken");
+finish();

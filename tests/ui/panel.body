@@ -1,0 +1,32 @@
+// ⚙ > Window: every position keeps its own size, the panel follows it after switching, and it is saved
+root.open('{"tab":"window"}'); wait(900);
+const choice = findAll(floatingMenu, c => c.label === "Mode" && c.chosen !== undefined)[0];
+const flow = findAll(choice, c => c.spacing === 6 && c.children.length > 3)[0];
+function mode(value) { return findAll(flow, c => c.modelData !== undefined).filter(c => c.modelData.value === value)[0]; }
+const hrow = findAll(floatingMenu, c => c.label === "Panel height" && c.pick !== undefined)[0];
+const track = findAll(hrow, c => c.moved !== undefined && c.visible)[0];
+function dragHeightTo(pct) { const fraction = (pct - 5) / 95; // the slider runs 5-100 %
+    mousePress(track, track.width * fraction, 10); mouseMove(track, track.width * fraction, 10); mouseRelease(track, track.width * fraction, 10); wait(200); }
+function dockH() { return dockedArea.height; }
+function wantH() { return Math.round(root.targetScreen.height * root.panelH / 100) + root.offset; }
+
+click(mode("top"));
+eq(root.edge, "top", "clicking Top selects it");
+dragHeightTo(40);
+eq(root.panelH, 40, "dragging the height slider sets Top to 40 %");
+eq(dockH(), wantH(), "the panel is as tall as Top's height says");
+click(mode("bottom"));
+eq(root.panelH, 50, "Bottom starts with its own default (50 %)");
+dragHeightTo(60);
+eq(root.panelH, 60, "Bottom set to 60 %");
+click(mode("top"));
+eq(root.panelH, 40, "back on Top: 40 % is still there");
+eq(dockH(), wantH(), "and the panel is 40 % tall again (it once stayed at full height)");
+click(mode("bottom"));
+eq([root.panelH, dockH() === wantH()], [60, true], "Bottom still has its 60 %");
+click(mode("left")); click(mode("right")); click(mode("full")); click(mode("top"));
+eq([root.panelH, dockH() === wantH()], [40, true], "after Left, Right and Full, Top is still 40 %");
+root.saveNow(); wait(700);
+const text = root.readFile(root.configPath);
+ok(text.indexOf("top = [100, 40]") >= 0 && text.indexOf("bottom = [100, 60]") >= 0, "both sizes are written to config.toml");
+finish();

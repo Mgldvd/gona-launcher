@@ -1,0 +1,14 @@
+// config: [tiles]\npadding = 0\nshow_names = false\n[layout]\ntype = "leaf"\nids = ["foot"]
+// Padding 0 (⚙ > Tiles): the icon sits against the tile's border and the tile against the launcher's edge;
+// the default 14 puts back the room there was (12 around the icon, 14 on the sides, 30 at the top)
+const cellOf = () => findAll(card, c => c.appId === "foot" && c.visible)[0];
+const cell = cellOf();
+ok(cell !== undefined, "the app is shown");
+const p = cell.mapToItem(card, 0, 0);
+eq([Math.round(p.x), Math.round(p.y), cell.width], [0, 0, root.iconSize], "padding 0: the icon is the whole cell, at the corner of the launcher");
+root.setTilePadding(14); wait(300);
+const c2 = cellOf(), q = c2.mapToItem(card, 0, 0);
+eq([Math.round(q.x), Math.round(q.y), c2.width], [12 + 14, 12 + 30, root.iconSize + 24], "padding 14: the margins there always were");
+root.setTilePadding(99); wait(100);
+eq(root.tilePadding, 24, "at most 24");
+finish();
