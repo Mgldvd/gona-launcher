@@ -1,0 +1,15 @@
+Gona Launcher is dual-licensed: you may use it under either of these licenses,
+at your option.
+
+  - Apache License, Version 2.0 (LICENSE-APACHE, or
+    http://www.apache.org/licenses/LICENSE-2.0)
+  - MIT License (LICENSE-MIT, or https://opensource.org/licenses/MIT)
+
+SPDX-License-Identifier: MIT OR Apache-2.0
+
+Copyright (c) 2026 mglq
+
+External dependencies: none are bundled. At run time the plugin uses the
+Omarchy shell, Quickshell and Qt that Omarchy already provides, each under its
+own license. The compiled effect shader (app/shaders/fx.frag.qsb) is built from
+app/shaders/fx.frag in this repository and is covered by the same licenses.

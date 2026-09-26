@@ -1,0 +1,145 @@
+# Gona Launcher preset: Omarchy.
+# The full one: full screen, the apps a fresh Omarchy install has in seven titled tiles, each with its own colour and
+# a soft tint, the icons centred in every tile, square corners like Omarchy's own windows, the Beams effect and every
+# option on. Two rows: the top one (Web, Chat, System) has larger icons, the bottom one (Dev, Office, Media & Play,
+# Create) smaller ones, and the tiles are as wide as the apps they hold.
+# A tile lists alternatives (browsers, terminals, editors, games): only the installed ones show, so the
+# tiles fill in as apps are added with Omarchy's installers and nothing breaks when one is removed.
+# What this file does not say is the launcher's default.
+version = 1
+
+[window]
+mode = "full"
+offset = 24
+effect = "beams"
+effect_ms = 550
+
+[tiles]
+icon_size = 40
+gap = 10
+border_width = 2
+
+[search]
+all_apps = true
+
+[buttons]
+all_apps = true
+shut_down = true
+restart = true
+log_out = true
+profiles = true
+
+[usage]
+show_row = true
+row_count = 8
+
+[appearance]
+mode = "auto"
+
+# top row | bottom row
+[layout]
+type = "split"
+dir = "v"
+ratio = 0.5
+
+# top row: Web 30 % | Chat 40 % | System 30 %
+[layout.a]
+type = "split"
+dir = "h"
+ratio = 0.3
+
+[layout.a.a]
+type = "leaf"
+centerH = true
+centerV = true
+title = "Web"
+titleBold = true
+icon = 48
+cBorder = { v = 0, a = 85 }
+cBg = { v = 0, a = 30 }
+ids = ["chromium", "zen", "firefox", "brave-browser", "google-chrome", "microsoft-edge", "YouTube", "X", "Google Maps"]
+
+[layout.a.b]
+type = "split"
+dir = "h"
+ratio = 0.5714
+
+[layout.a.b.a]
+type = "leaf"
+centerH = true
+centerV = true
+title = "Chat"
+titleBold = true
+launchAll = true
+icon = 48
+cBorder = { v = 4, a = 85 }
+cBg = { v = 4, a = 30 }
+ids = ["WhatsApp", "Google Messages", "signal", "signal-desktop", "Discord", "HEY", "Zoom", "Basecamp", "Google Contacts"]
+
+[layout.a.b.b]
+type = "leaf"
+centerH = true
+centerV = true
+title = "System"
+titleBold = true
+icon = 48
+cBorder = { v = 5, a = 85 }
+cBg = { v = 5, a = 30 }
+ids = ["org.gnome.Nautilus", "btop", "Disk Usage", "org.gnome.DiskUtility", "omacalc", "localsend", "1password"]
+
+
+# bottom row: Dev 20 % | Office 32 % | Media & Play 24 % | Create 24 %
+[layout.b]
+type = "split"
+dir = "h"
+ratio = 0.2
+
+[layout.b.a]
+type = "leaf"
+centerH = true
+centerV = true
+title = "Dev"
+titleBold = true
+cBorder = { v = 3, a = 85 }
+cBg = { v = 3, a = 30 }
+ids = ["foot", "com.mitchellh.ghostty", "Alacritty", "kitty", "nvim", "code", "dev.zed.Zed", "Helix", "emacs", "Docker"]
+
+[layout.b.b]
+type = "split"
+dir = "h"
+ratio = 0.4
+
+[layout.b.b.a]
+type = "leaf"
+centerH = true
+centerV = true
+title = "Office"
+titleBold = true
+cBorder = { v = 2, a = 85 }
+cBg = { v = 2, a = 30 }
+ids = ["libreoffice-writer", "libreoffice-calc", "libreoffice-impress", "obsidian", "omawrite", "org.gnome.Evince", "com.github.xournalpp.xournalpp"]
+
+[layout.b.b.b]
+type = "split"
+dir = "h"
+ratio = 0.5
+
+[layout.b.b.b.a]
+type = "leaf"
+centerH = true
+centerV = true
+title = "Media & Play"
+titleBold = true
+cBorder = { v = 1, a = 85 }
+cBg = { v = 1, a = 30 }
+ids = ["mpv", "imv", "cliamp", "spotify", "Google Photos", "steam", "com.moonlight_stream.Moonlight", "heroic", "net.lutris.Lutris", "com.libretro.RetroArch", "battlenet", "com.nvidia.geforcenow", "Xbox Cloud Gaming"]
+
+[layout.b.b.b.b]
+type = "leaf"
+centerH = true
+centerV = true
+title = "Create"
+titleBold = true
+cBorder = { v = 7, a = 85 }
+cBg = { v = 7, a = 30 }
+ids = ["com.github.PintaProject.Pinta", "org.kde.kdenlive", "com.obsproject.Studio", "omacut", "aether"]

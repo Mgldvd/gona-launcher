@@ -1,0 +1,78 @@
+# Gona Launcher preset: Top.
+# A panel that drops from the top of the screen: four titled tiles (Web, Work, Media, System), each its own colour
+# with a soft tint and the icons centred, square corners, the all-apps button, and the Fluid opening. Lighter than
+# Omarchy.
+version = 1
+
+[window]
+mode = "top"
+effect = "fluid"
+effect_ms = 600
+
+[window.panels]
+top = [90, 40]
+
+[tiles]
+icon_size = 40
+gap = 8
+
+[search]
+all_apps = true
+
+[buttons]
+all_apps = true
+
+[layout]
+type = "split"
+dir = "h"
+ratio = 0.25
+
+[layout.a]
+type = "leaf"
+centerH = true
+centerV = true
+title = "Web"
+titleBold = true
+cBorder = { v = 0, a = 85 }
+cBg = { v = 0, a = 30 }
+ids = ["chromium", "zen", "firefox", "WhatsApp", "Discord", "YouTube"]
+
+[layout.b]
+type = "split"
+dir = "h"
+ratio = 0.3333
+
+[layout.b.a]
+type = "leaf"
+centerH = true
+centerV = true
+title = "Work"
+titleBold = true
+cBorder = { v = 2, a = 85 }
+cBg = { v = 2, a = 30 }
+ids = ["libreoffice-writer", "libreoffice-calc", "obsidian", "omawrite", "org.gnome.Evince"]
+
+[layout.b.b]
+type = "split"
+dir = "h"
+ratio = 0.5
+
+[layout.b.b.a]
+type = "leaf"
+centerH = true
+centerV = true
+title = "Media"
+titleBold = true
+cBorder = { v = 1, a = 85 }
+cBg = { v = 1, a = 30 }
+ids = ["mpv", "imv", "spotify", "cliamp", "Google Photos"]
+
+[layout.b.b.b]
+type = "leaf"
+centerH = true
+centerV = true
+title = "System"
+titleBold = true
+cBorder = { v = 5, a = 85 }
+cBg = { v = 5, a = 30 }
+ids = ["foot", "nvim", "org.gnome.Nautilus", "btop", "localsend"]
