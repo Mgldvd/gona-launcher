@@ -374,7 +374,7 @@ Rectangle {
                 EffectPreview { width: col.width; shell: menu.shell }
                 MenuChoice {
                     shell: menu.shell; fullWidth: col.width
-                    label: "Effect"
+                    label: menu.shell.reduceMotion ? "Effect (not shown while Reduce motion is on)" : "Effect"
                     options: [{ text: "Classic", value: "classic" }, { text: "Fade", value: "fade" }, { text: "Slide", value: "slide" },
                               { text: "Meet", value: "meet" }, { text: "Corners", value: "corners" }, { text: "Blocks", value: "blocks" },
                               { text: "Fluid", value: "fluid" }, { text: "Bounce", value: "bounce" }, { text: "Genie", value: "genie" },

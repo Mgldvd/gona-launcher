@@ -168,5 +168,13 @@ Rectangle {
             color: shell.mDim
             font.pixelSize: 12
         }
+        Text { // no effect plays while motion is reduced: say so, or picking one seems to do nothing
+            visible: shell.reduceMotion
+            width: parent.width
+            text: "Reduce motion is on, so the launcher opens at once with no effect. Turn it off below to use this one."
+            color: shell.mDanger
+            font.pixelSize: 12
+            wrapMode: Text.WordWrap
+        }
     }
 }
