@@ -9,6 +9,8 @@ launcher looks unchanged.
 
 ## Unreleased
 
+## 1.0.2 - 2026-09-27
+
 - "Open with Super" is now off until you turn it on: the first start's switch starts off and names the file it writes
   (`~/.config/hypr/bindings.lua`), and pressing Esc on that screen, or a factory reset, never touches the file.
 - A Super-alone line of your own for the launcher in `bindings.lua` is no longer replaced: the launcher leaves it as it is and
