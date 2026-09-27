@@ -151,12 +151,12 @@ Rectangle {
             onToggled: box.shell.welcomeSaveOthers = !box.shell.welcomeSaveOthers
         }
 
-        MenuToggle { // the first start only: the one thing the launcher writes outside its own folders, so it asks
-            visible: box.shell.welcomeFirstRun && box.shell.superAvailable
+        MenuToggle { // the first start only: the one thing the launcher writes outside its own folders, so it asks (off until turned on)
+            visible: box.shell.welcomeFirstRun && box.shell.superAvailable && !box.shell.superByHand && box.shell.superMode === "off"
             shell: box.shell
             fullWidth: body.width
-            label: "Open with Super: press and release it alone"
-            tip: "Adds a shortcut to Hyprland's ~/.config/hypr/bindings.lua, in a marked block of its own. Change it or remove it in ⚙ > Keys."
+            label: "Open with Super: adds a binding to ~/.config/hypr/bindings.lua"
+            tip: "Optional. Pressing and releasing Super alone opens the launcher. It is a marked block of its own in Hyprland's bindings.lua; nothing else in the file changes. Change it or remove it in ⚙ > Keys."
             checked: box.shell.welcomeSuper
             onToggled: box.shell.welcomeSuper = !box.shell.welcomeSuper
         }

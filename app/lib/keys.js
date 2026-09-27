@@ -71,7 +71,12 @@ function superModeOf(text) {
     if (i < 0 || j < i) return "off";
     return s.slice(i, j).indexOf("allApps") >= 0 ? "allApps" : "tiles";
 }
-// `text` with the block set to `mode` (removed for "off"); the rest of the file is kept as it was
+// the lines outside the block that bind Super alone to this launcher: the person's own, which the launcher never touches
+const SUPER_BY_HAND = /^[ \t]*[\w.]*bind\(.*SUPER_L.*gona\.launcher.*\)[ \t]*$/m;
+function superByHand(text) { return SUPER_BY_HAND.test(withSuperMode(text, "off")); }
+// `text` with the block set to `mode` (removed for "off"); nothing outside the block is ever changed. With a
+// Super-alone binding for this launcher written by hand, no block is added: both would fire on one release and
+// open and close it at once.
 function withSuperMode(text, mode) {
     let s = String(text || "");
     const i = s.indexOf(SUPER_BEGIN), j = s.indexOf(SUPER_END);
@@ -82,10 +87,7 @@ function withSuperMode(text, mode) {
         if (start > 0 && s.charAt(start - 1) === "\n" && (start < 2 || s.charAt(start - 2) === "\n")) start--; // the blank line before it
         s = s.slice(0, start) + s.slice(end);
     }
-    if (mode !== "tiles" && mode !== "allApps") return s;
-    // a Super-alone binding for this launcher written by hand would fire together with the block (two toggles on
-    // one release: it opens and closes at once), so the block takes its place
-    s = s.replace(/^[ \t]*[\w.]*bind\(.*SUPER_L.*gona\.launcher.*\)[ \t]*\n?/gm, "");
+    if ((mode !== "tiles" && mode !== "allApps") || SUPER_BY_HAND.test(s)) return s;
     const cmd = "omarchy-shell shell toggle gona.launcher" + (mode === "allApps" ? " '{\"allApps\":true}'" : "");
     if (s !== "" && !s.endsWith("\n")) s += "\n";
     return s + "\n" + SUPER_BEGIN + "\n"

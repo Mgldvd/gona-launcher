@@ -623,7 +623,7 @@ Rectangle {
                         id: superChoice
                         shell: menu.shell; fullWidth: parent.width - 24
                         x: 12; y: 10
-                        enabled: menu.shell.superAvailable
+                        enabled: menu.shell.superAvailable && !(menu.shell.superByHand && menu.shell.superMode === "off")
                         label: "Open with Super: press and release it alone"
                         options: [{ text: "Off", value: "off" }, { text: "Tiles", value: "tiles" }, { text: "All apps", value: "allApps" }]
                         current: menu.shell.superMode
@@ -631,7 +631,9 @@ Rectangle {
                     }
                     Text {
                         anchors { right: parent.right; rightMargin: 12; top: parent.top; topMargin: 10 }
-                        text: menu.shell.superAvailable ? "Saved in bindings.lua. Set Off before removing the plugin" : "Needs Hyprland's ~/.config/hypr/bindings.lua"
+                        text: !menu.shell.superAvailable ? "Needs Hyprland's ~/.config/hypr/bindings.lua"
+                            : menu.shell.superByHand && menu.shell.superMode === "off" ? "Already bound by a line of your own in bindings.lua"
+                            : "Saved in bindings.lua. Set Off before removing the plugin"
                         color: menu.shell.mDim
                         font.pixelSize: 11
                     }
