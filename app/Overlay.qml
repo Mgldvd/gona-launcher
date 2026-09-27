@@ -1118,17 +1118,21 @@ Item {
     // ---- Super alone opens the launcher (⚙ > Keys, first row) ----------------------------------------
     // A plugin cannot bind keys itself, so this is a marked block in Hyprland's bindings.lua
     // (KeyCombo.withSuperMode()); the file is the only record of it, the same for every profile and never
-    // in config.toml. It is written only with the person's consent: a switch on the first start's welcome screen
-    // (`welcomeSuper`, on by default and worded to say what it does), or ⚙ > Keys later; loading the plugin never
-    // touches bindings.lua. The `super-key` file in stateDir remembers the choice, so "Off" (or deleting the block by
-    // hand) sticks. Nothing happens where there is no bindings.lua (not Omarchy, or the tests' throw-away HOME).
+    // in config.toml. It is written only when the person asks for it: a switch on the first start's welcome screen
+    // (`welcomeSuper`, off until they turn it on, and naming the file), or ⚙ > Keys later. Loading the plugin, Esc on
+    // the welcome screen and a factory reset never touch bindings.lua, and nothing outside the block is ever changed:
+    // with a Super-alone binding for the launcher written by hand (`superByHand`) no block is added. The `super-key`
+    // file in stateDir remembers the choice. Nothing happens where there is no bindings.lua (not Omarchy, or the
+    // tests' throw-away HOME).
     readonly property string hyprBindings: Quickshell.env("HOME") + "/.config/hypr/bindings.lua"
     property string superMode: "off"       // "off" | "tiles" | "allApps", as the file says
     property bool superAvailable: false    // there is a bindings.lua to write to
+    property bool superByHand: false       // it already binds Super alone to the launcher in a line of the person's own
     function refreshSuperKey() {
         const text = readFile(hyprBindings);
         superAvailable = text.trim() !== "";
         superMode = KeyCombo.superModeOf(text);
+        superByHand = KeyCombo.superByHand(text);
         // a block that is already there is the person's choice: remember it (nothing is ever added here)
         if (superAvailable && superMode !== "off" && readFile(stateDir + "/super-key").trim() === "") writeFile(stateDir + "/super-key", superMode);
     }
@@ -1137,6 +1141,7 @@ Item {
         if (text.trim() === "") { superAvailable = false; return; }
         const next = KeyCombo.withSuperMode(text, mode);
         superMode = KeyCombo.superModeOf(next);
+        superByHand = KeyCombo.superByHand(next);
         writeFile(stateDir + "/super-key", superMode);
         if (next === text) return;
         writeFile(hyprBindings, next); // written before it returns, so Hyprland reads the new file
@@ -1263,7 +1268,7 @@ Item {
         tileMenuPath = null;
         welcomeIndex = 0;
         welcomeSaveOthers = false;
-        welcomeSuper = true;
+        welcomeSuper = false;
         welcomeFirstRun = true;
         welcomeOpen = true;
     }
@@ -1279,7 +1284,7 @@ Item {
     property bool welcomeFirstRun: false  // shown because there is no configuration yet: Esc then starts with the recommended one
     property int welcomeIndex: 0          // the card chosen with the keyboard or a click
     property bool welcomeSaveOthers: false // also save the other presets as profiles
-    property bool welcomeSuper: true       // the first start's switch: add Super alone to Hyprland's bindings.lua (consent, see refreshSuperKey)
+    property bool welcomeSuper: false      // the first start's switch: add Super alone to Hyprland's bindings.lua (opt-in, see refreshSuperKey)
     // how many of the other presets fit as new profiles (none that already exist by that name)
     function presetsToSave(name) {
         const room = maxProfiles - 1 - profileNames.length;
@@ -1307,8 +1312,9 @@ Item {
     }
     // Puts preset `name` in place of the settings and tiles of the profile in use (the state before is kept
     // in <file>.bak, except on the first start, when there was none); with `saveOthers`, the other presets
-    // are saved as profiles too, as many as there is room for.
-    function applyPreset(name, saveOthers) {
+    // are saved as profiles too, as many as there is room for. `leaving` (Esc) starts without asking anything of
+    // bindings.lua, whatever the welcome screen's switch says.
+    function applyPreset(name, saveOthers, leaving) {
         const text = presetText(name);
         if (text.trim() === "") { toast = "The ready-made profile \"" + name + "\" is missing"; return false; }
         if (!welcomeFirstRun) return addPresetProfile(name, text);
@@ -1323,9 +1329,11 @@ Item {
             for (const other of others) writeFile(profilePath(other), presetText(other));
             setProfiles(profileNames.concat(others));
         }
-        if (superAvailable) { // what the welcome screen's switch said (it was shown, on by default)
-            if (!welcomeSuper) setSuperMode("off");
-            else if (superMode === "off") setSuperMode("tiles");
+        // the welcome screen's switch, only when Start was chosen with it on; bindings.lua is otherwise left as it is
+        // (a block already there stays: taking it out is ⚙ > Keys' job)
+        if (superAvailable && !leaving && superMode === "off") {
+            if (welcomeSuper && !superByHand) setSuperMode("tiles");
+            else writeFile(stateDir + "/super-key", "off");
         }
         welcomeOpen = false;
         welcomeFirstRun = false;
@@ -1359,7 +1367,7 @@ Item {
         return r.ok;
     }
     function closeWelcome() {
-        if (welcomeFirstRun) applyPreset(Presets.LIST[0].name, false); // never left with nothing on screen
+        if (welcomeFirstRun) applyPreset(Presets.LIST[0].name, false, true); // never left with nothing on screen
         else welcomeOpen = false;
     }
     // a key on the welcome screen: arrows and Tab choose, the digits 1.. too, Enter / Space start, Esc closes it

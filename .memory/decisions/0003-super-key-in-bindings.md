@@ -16,3 +16,8 @@ so). The file, not config.toml, is the only record, so it is the same in every p
 **Update 2026-09-26**: the block is no longer added when the plugin first loads. The Omarchy marketplace's submission checklist
 requires that a plugin not change user configuration without explicit consent, so the first start's welcome screen carries a switch
 (on by default, worded to say what it writes) and ⚙ > Keys stays the way to change it. Existing installs keep what they have.
+
+**Update 2026-09-27**: opt-in. A switch that starts on is opt-out, and Esc on the welcome screen wrote the block too, so leaving
+counted as a yes. Now the switch starts off and names the file, Esc and a factory reset never touch bindings.lua, and the plugin
+only ever changes its own marked block: a Super-alone line the person wrote is left alone (no block beside it) instead of being
+replaced. Cost: without turning it on, the launcher opens from the bar button or `omarchy-shell shell toggle gona.launcher`.

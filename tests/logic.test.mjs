@@ -24,7 +24,7 @@ function load(file, names) {
 }
 const Tree = load("lib/layout.js", ["nodeAt", "leafAt", "walkLeaves", "splitAt", "closeAt", "isCross",
     "rotateCrossAt", "cellWidth", "cellHeight", "cellPad", "padTop", "displayIds", "leafRects", "leafMinH", "leafMinW", "fitIcon", "minH", "minW", "effRatio"]);
-const KeyCombo = load("lib/keys.js", ["keyName", "comboOf", "comboProblem", "validCombo", "superModeOf", "withSuperMode"]);
+const KeyCombo = load("lib/keys.js", ["keyName", "comboOf", "comboProblem", "validCombo", "superModeOf", "withSuperMode", "superByHand"]);
 const Colors = load("lib/colors.js", ["validValue", "cleanField", "patchField", "parseHex", "toHex", "mix", "over", "luminance", "isLight"]);
 
 const Toml = load("lib/toml.js", ["parse", "stringify"]);
@@ -145,11 +145,16 @@ test("Super alone: the launcher's own block in bindings.lua", () => {
     assert.equal(all.split(">>> gona-launcher:super").length, 2); // replaced, not added twice
     assert.equal(KeyCombo.withSuperMode(all, "off"), mine);     // off gives the file back as it was
     assert.equal(KeyCombo.withSuperMode("no newline", "off"), "no newline");
-    // a hand-written Super-alone binding would fire with the block (two toggles: opens and closes at once)
+    assert.ok(!KeyCombo.superByHand(all), "the launcher's own block is not a binding by hand");
+    // a Super-alone binding written by hand is the person's: never removed, and no block is added beside it (two
+    // toggles on one release would open and close it at once)
     const hand = mine + "-- tap Super\no.bind(\"SUPER + SUPER_L\", \"Gona Launcher\", \"omarchy-shell shell toggle gona.launcher\", { release = true })\no.bind(\"SUPER + E\", nil, \"nautilus\")\n";
-    const both = KeyCombo.withSuperMode(hand, "tiles");
-    assert.equal(both.split("SUPER_L").length, 2, "only the block binds Super alone");
-    assert.ok(both.includes('"SUPER + E"'), "the person's other bindings stay");
+    assert.ok(KeyCombo.superByHand(hand));
+    assert.equal(KeyCombo.withSuperMode(hand, "tiles"), hand, "nothing added, nothing removed");
+    assert.equal(KeyCombo.withSuperMode(hand, "off"), hand);
+    // a block from before the hand-written line: Off still removes only the block
+    assert.equal(KeyCombo.withSuperMode(KeyCombo.withSuperMode(mine, "tiles") + "o.bind(\"SUPER + SUPER_L\", nil, \"omarchy-shell shell toggle gona.launcher\")\n", "off"),
+                 mine + "o.bind(\"SUPER + SUPER_L\", nil, \"omarchy-shell shell toggle gona.launcher\")\n");
 });
 
 test("colour fields", () => {

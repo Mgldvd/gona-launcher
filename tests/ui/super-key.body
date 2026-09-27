@@ -19,9 +19,11 @@ root.setSuperMode("off"); wait(500);
 eq(root.readFile(f), mine, "Off gives the file back as it was");
 root.refreshSuperKey(); wait(300);
 eq([root.superMode, root.readFile(f)], ["off", mine], "Off sticks: the next open does not add it again");
-// a Super-alone binding written by hand: two toggles per release would open and close it at once, so the block replaces it
-root.writeFile(f, mine + '-- tap Super\no.bind("SUPER + SUPER_L", "Gona Launcher", "omarchy-shell shell toggle gona.launcher", { release = true })\n'); wait(300);
+// a Super-alone binding written by hand is the person's: it is never removed, and no block is added beside it
+// (both would fire on one release, opening and closing the launcher at once)
+const hand = mine + '-- tap Super\no.bind("SUPER + SUPER_L", "Gona Launcher", "omarchy-shell shell toggle gona.launcher", { release = true })\n';
+root.writeFile(f, hand); root.refreshSuperKey(); wait(300);
+eq([root.superByHand, root.superMode], [true, "off"], "the line is seen as the person's own");
 root.setSuperMode("tiles"); wait(500);
-text = root.readFile(f);
-eq([text.split("SUPER_L").length, text.split(">>> gona-launcher:super").length], [2, 2], "the hand-written binding is not left beside the block");
+eq([root.readFile(f), root.superMode], [hand, "off"], "choosing Tiles leaves the file exactly as it was");
 finish();

@@ -1,0 +1,12 @@
+// fixture: first-run
+// hypr: yes
+// Esc on the first start's welcome screen never writes bindings.lua, even with the switch turned on: leaving is not
+// a yes (found by hand: it used to add Super alone, the switch being on by default)
+const f = Quickshell.env("HOME") + "/.config/hypr/bindings.lua";
+const mine = root.readFile(f);
+eq([root.welcomeOpen, root.welcomeFirstRun, root.superAvailable], [true, true, true], "the first start, with a bindings.lua");
+root.welcomeSuper = true; wait(200);
+keyClick(Qt.Key_Escape); wait(1000);
+eq(root.welcomeOpen, false, "Esc closes it");
+eq([root.readFile(f), root.superMode], [mine, "off"], "and bindings.lua is untouched");
+finish();

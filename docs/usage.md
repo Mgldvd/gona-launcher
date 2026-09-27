@@ -7,13 +7,15 @@
 | Left click on the bar button | Toggles the launcher. It opens on the screen of that bar, and comes out of the button in the effects that start from one |
 | Right click on the bar button | A small menu: **Settings** (the launcher with its ⚙ menu; there is no ⚙ button inside the launcher), **Reload** (reads the configuration, profiles and usage from disk again), **About** (opens the project page) and the **Version** |
 | Middle click on the bar button | Opens straight into "All apps" |
-| Press and release **Super** alone | Toggles the launcher (chosen on the first start's welcome screen; ⚙ > Keys, first row: Off, Tiles or All apps) |
+| Press and release **Super** alone | Toggles the launcher, once you turn it on (optional, off by default: the first start's welcome screen, or ⚙ > Keys, first row: Off, Tiles or All apps) |
 | `omarchy-shell shell toggle gona.launcher` | Opens it, or closes it if it is open. `summon` opens and `hide` closes, without flipping |
 
 **Super alone** is a Hyprland binding the plugin keeps in `~/.config/hypr/bindings.lua`, between the lines
-`-- >>> gona-launcher:super >>>` and `-- <<< gona-launcher:super <<<`. It is written only with your consent: a switch on the first
-start's welcome screen (on by default, only when that file exists), or ⚙ > Keys > "Open with Super" later, which rewrites or
-removes the block. Loading the plugin never touches the file, and "Off" (or deleting the block by hand) is not undone later. A Super-alone line of your own for the launcher is replaced by the block, since both together would open and close it at once. It fires on release, so Super with another key still does what
+`-- >>> gona-launcher:super >>>` and `-- <<< gona-launcher:super <<<`. It is written only when you ask for it: a switch on the first
+start's welcome screen (off until you turn it on, shown only when that file exists), or ⚙ > Keys > "Open with Super" later,
+which rewrites or removes the block. Loading the plugin, Esc on the welcome screen and a factory reset never touch the file,
+and nothing outside the block is ever changed. If you already have a Super-alone line of your own for the launcher, it is left
+as it is and no block is added (both together would open and close it at once); ⚙ > Keys says so. It fires on release, so Super with another key still does what
 it did. It is the same in every profile.
 
 To use another key, bind the command in Omarchy's keybinding settings. The command takes a JSON payload:

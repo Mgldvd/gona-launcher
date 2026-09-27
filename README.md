@@ -35,9 +35,9 @@ afterwards, `omarchy restart shell`). This is the `dev` branch (source, docs, te
 only the installable plugin. To work on the plugin from a clone of this repo, see
 [development](docs/development.md) (`tools/install.sh`).
 
-**Press and release Super alone** to open it: on the first start a switch (on by default) adds that binding to
-`~/.config/hypr/bindings.lua` (a marked block of its own). Change it, point it at "All apps" or turn it off in
-⚙ > Keys, the first row. Add the bar button in Omarchy's settings (Bar) or with `omarchy plugin enable gona.launcher
+**Press and release Super alone** to open it, if you want: it is optional and off until you turn it on, with a switch on
+the first start or in ⚙ > Keys (the first row). It adds that binding to `~/.config/hypr/bindings.lua` in a marked block of
+its own and changes nothing else in the file; point it at "All apps" or turn it off there too. Add the bar button in Omarchy's settings (Bar) or with `omarchy plugin enable gona.launcher
 <section>`. Right-click on the bar button
 opens a small menu (Settings, Reload, About and the version), middle click opens straight into "All apps"; see [using it](docs/usage.md).
 

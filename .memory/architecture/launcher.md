@@ -29,13 +29,16 @@ A Hyprland binding, not a `keyAction`. Why: [decisions/0003-super-key-in-binding
 
 - The block between `-- >>> gona-launcher:super >>>` / `-- <<< gona-launcher:super <<<` in
   `~/.config/hypr/bindings.lua`; `KeyCombo.superModeOf()`/`withSuperMode()` read and rewrite it, the rest untouched.
-- `setSuperMode("off"|"tiles"|"allApps")` writes it and runs `hyprctl reload` in the same command.
-  `refreshSuperKey()` (at load and every `open()`) only READS it (and records a block that is already there); nothing adds
-  it on its own: the first start's welcome switch (`welcomeSuper`, on by default, `applyPreset()`) or ⚙ > Keys does, because
-  the Omarchy marketplace asks that a plugin not change user configuration without explicit consent. `stateDir/super-key`
+- `setSuperMode("off"|"tiles"|"allApps")` writes it with `writeFile()` (never as a command argument: the file can hold
+  tokens), then runs `hyprctl reload`. `refreshSuperKey()` (at load and every `open()`) only READS it (and records a block
+  that is already there); nothing adds it on its own: the first start's welcome switch (`welcomeSuper`, **off** until turned
+  on, `applyPreset()`; Esc passes `leaving` and writes nothing) or ⚙ > Keys does, because the Omarchy marketplace asks that a
+  plugin not change user configuration without explicit consent. Start with the switch off never removes a block already there. `stateDir/super-key`
   remembers the choice, so "Off" sticks. Tests: `welcome-super.body`, `super-key*.body`. The file is the only record (not config.toml, same in every profile).
-- A Super-alone bind for `gona.launcher` written by hand outside the block is deleted when the block is written:
-  two binds on one release toggle twice, so the launcher opens and closes at once ("it does not appear").
+- A Super-alone bind for `gona.launcher` written by hand outside the block (`KeyCombo.superByHand()`, `superByHand`) is
+  never touched, and no block is added beside it: two binds on one release toggle twice, so the launcher would open and
+  close at once ("it does not appear"). ⚙ > Keys greys the row out and says so; the welcome switch is not shown.
+  Tests: `welcome-esc-super.body`, `super-key.body`.
 - UI: the accent-framed first row of ⚙ > Keys. Tests: `tests/ui/super-key*.body`, `logic.test.mjs`.
 
 ## Filter and selection
