@@ -9,6 +9,12 @@ launcher looks unchanged.
 
 ## Unreleased
 
+## 1.0.1 - 2026-09-27
+
+- Security: turning Super alone on or off no longer passes the whole of `~/.config/hypr/bindings.lua` (which can hold tokens)
+  as a command argument, where other processes could read it; the launcher now writes its files itself, and the same goes for
+  saving and renaming profiles.
+
 ## 1.0.0 - 2026-09-26
 
 The first public version.

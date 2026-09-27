@@ -1105,9 +1105,15 @@ Item {
         return String(index + 1);
     }
     function validProfileName(name) { return /^[A-Za-z0-9_-]{1,32}$/.test(name) && ["default", "next", "previous"].indexOf(name) < 0; }
-    // writes a file by its path, whatever the FileView in use points at (the text goes as an argument)
+    // writes a file by its path, whatever the FileView in use points at; done here and not by a command, so the text
+    // (bindings.lua can hold tokens) never shows in a process's command line. Blocks until written, creates missing
+    // folders, and writes in place (not atomically) so a symlinked dotfile stays a symlink. FileView skips an empty
+    // text, so "" goes as a newline (every file emptied this way is read trimmed).
     function writeFile(path, text) {
-        Quickshell.execDetached(["sh", "-c", "mkdir -p \"$(dirname \"$2\")\" && printf '%s' \"$1\" > \"$2\"", "sh", text, path]);
+        const f = Qt.createQmlObject("import Quickshell.Io; FileView { blockWrites: true; atomicWrites: false; watchChanges: false; path: "
+                                     + JSON.stringify(path) + " }", root, "writeFile");
+        f.setText(text === "" ? "\n" : text);
+        f.destroy();
     }
     // ---- Super alone opens the launcher (⚙ > Keys, first row) ----------------------------------------
     // A plugin cannot bind keys itself, so this is a marked block in Hyprland's bindings.lua
@@ -1133,8 +1139,8 @@ Item {
         superMode = KeyCombo.superModeOf(next);
         writeFile(stateDir + "/super-key", superMode);
         if (next === text) return;
-        // written, then Hyprland told to read it again, in one command (two execDetached race)
-        Quickshell.execDetached(["sh", "-c", "printf '%s' \"$1\" > \"$2\" && hyprctl reload >/dev/null", "sh", next, hyprBindings]);
+        writeFile(hyprBindings, next); // written before it returns, so Hyprland reads the new file
+        Quickshell.execDetached(["hyprctl", "reload"]);
     }
     function savedProfile() {
         const name = readFile(stateDir + "/profile").trim();
@@ -1205,11 +1211,10 @@ Item {
         if (!validProfileName(to)) { profileResult("A name is 1 to 32 letters, digits, - or _ (and not \"default\", \"next\", \"previous\")", true); return false; }
         if (to === from) return true;
         if (profileNames.indexOf(to) >= 0) { profileResult("There is already a profile called \"" + to + "\"", true); return false; }
-        // one shell command, so the write of the profile in use lands before the move (two would race)
-        const current = activeProfile === from;
-        if (current) saveSize.stop();
-        Quickshell.execDetached(["sh", "-c", "[ -n \"$3\" ] && printf '%s' \"$3\" > \"$1\"; mv -f \"$1\" \"$2\"; for e in .bak .broken; do [ -e \"$1$e\" ] && mv -f \"$1$e\" \"$2$e\"; done; true",
-                                 "sh", profilePath(from), profilePath(to), current ? configText() : ""]);
+        // the profile in use is written first (writeFile blocks), so its latest text is what moves
+        if (activeProfile === from) { saveSize.stop(); writeFile(profilePath(from), configText()); }
+        Quickshell.execDetached(["sh", "-c", "mv -f \"$1\" \"$2\"; for e in .bak .broken; do [ -e \"$1$e\" ] && mv -f \"$1$e\" \"$2$e\"; done; true",
+                                 "sh", profilePath(from), profilePath(to)]);
         if (activeProfile === from) { activeProfile = to; lastWritten = configText(); lastWriteTime = Date.now(); writeFile(stateDir + "/profile", to); }
         setProfiles(profileNames.map(n => n === from ? to : n));
         profileResult("Renamed \"" + from + "\" to \"" + to + "\"", false);

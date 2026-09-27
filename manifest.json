@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "gona.launcher",
   "name": "Gona Launcher",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "mglq",
   "license": "MIT OR Apache-2.0",
   "description": "Highly configurable app launcher: tiles you split, colour and arrange yourself, one tap of Super away",
