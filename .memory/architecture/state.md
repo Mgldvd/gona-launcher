@@ -44,7 +44,7 @@ usage history and import/export as a person sees them are in [docs/configuration
   follow the new path), loads the other with `applyConfigText()`, carries over `showProfileButtons`/`profileLabels`,
   sets `lastWritten` so the watcher does not read it back, and shows `toast` for 1.8 s.
 - `createProfile()` copies what is on screen; `deleteProfile()` falls back to the default first if it is in use;
-  `renameProfile()` writes and moves in one shell command; `cycleProfile(±1)` wraps default → profiles.
+  `renameProfile()` writes the one in use with `writeFile()`, then moves it; `cycleProfile(±1)` wraps default → profiles.
 - `profileButtons`: default first, then saved ones by name, at most `maxProfiles` (5); none while only the default
   exists. Tests: `tests/ui/profile*.body`.
 

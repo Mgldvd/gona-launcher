@@ -50,6 +50,15 @@ else
     fail "CHANGELOG.md" "needs a '## $VERSION' section (manifest.json's version) and a '## Unreleased' one"
 fi
 
+# a file's text is never a command argument (every process can read /proc/<pid>/cmdline, and bindings.lua can hold
+# tokens): the launcher writes files itself with writeFile()
+if grep -n "printf '%s'" "$ROOT"/app/*.qml "$ROOT"/app/*/*.qml >/tmp/gona-launcher-argv.$$ 2>/dev/null; then
+    fail "no file text passed to a shell as an argument" "$(cat /tmp/gona-launcher-argv.$$) (use writeFile())"
+else
+    ok "no file text passed to a shell as an argument"
+fi
+rm -f /tmp/gona-launcher-argv.$$
+
 # the committed .qsb must be what tools/build-shaders.sh makes from the source (qsb output is deterministic)
 if command -v qsb >/dev/null 2>&1 || [ -x /usr/lib/qt6/bin/qsb ]; then
     TMP="$(mktemp -d)"

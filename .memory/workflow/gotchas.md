@@ -6,8 +6,11 @@ The QML traps (`ColorGroup`, transparent window, `Loader` focus, `FileView` firs
 
 - `JsonAdapter` hands JSON arrays inside a `var` over as Qt lists (`Array.isArray()` false): round-trip through
   `JSON.stringify` (`settingsSnapshot()`, `loadPanels(JSON.parse(JSON.stringify(panels)))`).
-- Two `Quickshell.execDetached` calls race: a write and a move/reload go in **one** `sh -c`
-  (`renameProfile()`, `setSuperMode()`).
+- Never pass a file's text as a command argument (`/proc/<pid>/cmdline` is readable by every process, and the marketplace
+  review flagged it for `bindings.lua`, which can hold tokens; it also hits the argument size limit). Write with
+  `writeFile()` (a throw-away `FileView`, `blockWrites`, not atomic so a symlinked dotfile stays one; `FileView` never writes an empty text, so `""` goes as a newline); it has returned once
+  the file is written, so a following `execDetached` (`mv`, `hyprctl reload`) cannot race it. Two `execDetached` calls
+  still race each other: those go in one `sh -c`.
 - Shell in this repo: avoid heredocs containing `$(...)` and complex `sed` on QML files (they hung or blanked lines
   before); prefer Edit/Write. `cp` is aliased to interactive: use `/bin/cp -f`.
 - `~/.config/omarchy/plugins/<id>/` may contain **no symlinks at all** (`omarchy plugin validate` runs
